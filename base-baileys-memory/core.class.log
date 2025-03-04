@@ -1,0 +1,222 @@
+[handleMsg]:  {
+  key: {
+    remoteJid: '573017880830@s.whatsapp.net',
+    fromMe: false,
+    id: '1D9DF957B181C2BAF68C98C596C5E34A',
+    participant: undefined
+  },
+  messageTimestamp: 1740968947,
+  pushName: 'JUAN CARLOS ROSAS V',
+  broadcast: false,
+  message: Message {
+    conversation: 'Hola',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2,
+      messageSecret: [Uint8Array]
+    }
+  },
+  body: 'Hola',
+  from: '573017880830'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_d33e7eef-d445-433a-8e40-12ebf09b318e',
+  keyword: 'key_e6abc826-fba6-423f-be49-2e1d10214c3d',
+  answer: 'Consultorio doctor Juan Carlos Rosas\n' +
+    '🙌 ¡Bienvenido al sistema de citas! Estas son las opciones disponibles:\n' +
+    '(Seleccione el numero correspondientes de la opción a elegir)\n' +
+    '*1* - Agendar una cita.\n' +
+    '*2* - Consultar mis citas.\n' +
+    '*3* - Información del consultorio.\n' +
+    '*4* - Cancelar una cita.',
+  options: {
+    media: null,
+    buttons: [],
+    capture: false,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object]
+    ],
+    keyword: {},
+    callback: false
+  },
+  refSerialize: '35e5b0bc1710f6e3ebc75fe53f211a8f'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573017880830@s.whatsapp.net',
+    fromMe: false,
+    id: '55992B1CC6930F9961135369479BC2F3',
+    participant: undefined
+  },
+  messageTimestamp: 1740968956,
+  pushName: 'JUAN CARLOS ROSAS V',
+  broadcast: false,
+  message: Message {
+    conversation: 'Buen dia',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2,
+      messageSecret: [Uint8Array]
+    }
+  },
+  body: 'Buen dia',
+  from: '573017880830'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573017880830@s.whatsapp.net',
+    fromMe: false,
+    id: '09A60BE812328CB9CACCB09E2DB2F73A',
+    participant: undefined
+  },
+  messageTimestamp: 1740969004,
+  pushName: 'JUAN CARLOS ROSAS V',
+  broadcast: false,
+  message: Message {
+    conversation: 'Buen dia',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2,
+      messageSecret: [Uint8Array]
+    }
+  },
+  body: 'Buen dia',
+  from: '573017880830'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_d33e7eef-d445-433a-8e40-12ebf09b318e',
+  keyword: 'key_e6abc826-fba6-423f-be49-2e1d10214c3d',
+  answer: 'Consultorio doctor Juan Carlos Rosas\n' +
+    '🙌 ¡Bienvenido al sistema de citas! Estas son las opciones disponibles:\n' +
+    '(Seleccione el numero correspondientes de la opción a elegir)\n' +
+    '*1* - Agendar una cita.\n' +
+    '*2* - Consultar mis citas.\n' +
+    '*3* - Información del consultorio.\n' +
+    '*4* - Cancelar una cita.',
+  options: {
+    media: null,
+    buttons: [],
+    capture: false,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object]
+    ],
+    keyword: {},
+    callback: false
+  },
+  refSerialize: '35e5b0bc1710f6e3ebc75fe53f211a8f'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573017880830@s.whatsapp.net',
+    fromMe: false,
+    id: '5A877E5F9C00DDFD2EB98A9CBFD9ECA3',
+    participant: undefined
+  },
+  messageTimestamp: 1740969013,
+  pushName: 'JUAN CARLOS ROSAS V',
+  broadcast: false,
+  message: Message {
+    conversation: 'Doc',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2,
+      messageSecret: [Uint8Array]
+    }
+  },
+  body: 'Doc',
+  from: '573017880830'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573017880830@s.whatsapp.net',
+    fromMe: false,
+    id: '170BFC0EF54CD78F6CAC4291A6652146',
+    participant: undefined
+  },
+  messageTimestamp: 1740969019,
+  pushName: 'JUAN CARLOS ROSAS V',
+  broadcast: false,
+  message: Message {
+    conversation: 'Doc',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2,
+      messageSecret: [Uint8Array]
+    }
+  },
+  body: 'Doc',
+  from: '573017880830'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573017880830@s.whatsapp.net',
+    fromMe: false,
+    id: 'D79C868A161BB095CA0787D6A8DC5CCC',
+    participant: undefined
+  },
+  messageTimestamp: 1740969029,
+  pushName: 'JUAN CARLOS ROSAS V',
+  broadcast: false,
+  message: Message {
+    conversation: 'Doctor',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2,
+      messageSecret: [Uint8Array]
+    }
+  },
+  body: 'Doctor',
+  from: '573017880830'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_d33e7eef-d445-433a-8e40-12ebf09b318e',
+  keyword: 'key_e6abc826-fba6-423f-be49-2e1d10214c3d',
+  answer: 'Consultorio doctor Juan Carlos Rosas\n' +
+    '🙌 ¡Bienvenido al sistema de citas! Estas son las opciones disponibles:\n' +
+    '(Seleccione el numero correspondientes de la opción a elegir)\n' +
+    '*1* - Agendar una cita.\n' +
+    '*2* - Consultar mis citas.\n' +
+    '*3* - Información del consultorio.\n' +
+    '*4* - Cancelar una cita.',
+  options: {
+    media: null,
+    buttons: [],
+    capture: false,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object]
+    ],
+    keyword: {},
+    callback: false
+  },
+  refSerialize: '35e5b0bc1710f6e3ebc75fe53f211a8f'
+}
