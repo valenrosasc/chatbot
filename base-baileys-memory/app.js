@@ -6,9 +6,54 @@ const QRPortalWeb = require('@bot-whatsapp/portal');
 const BaileysProvider = require('@bot-whatsapp/provider/baileys');
 const MockAdapter = require('@bot-whatsapp/database/mock');
 const moment = require('moment');
+const { Dropbox } = require('dropbox'); // SDK de Dropbox
+const fs = require('fs');
+const path = require('path');
 
 // Importa las funciones para interactuar con SQLite
 const { leerCitasDesdeSQLite, guardarEnSQLite, eliminarCitaEnSQLite, enviarCorreo } = require('./guardarCita');
+
+// Configura el cliente de Dropbox
+const dbx = new Dropbox({ accessToken: process.env.DROPBOX_ACCESS_TOKEN });
+
+// Función para subir la base de datos a Dropbox
+const subirBaseDeDatosADropbox = async () => {
+    try {
+        const dbPath = path.join(__dirname, 'citas.db');
+        const dbFile = fs.readFileSync(dbPath);
+
+        // Subir el archivo a Dropbox
+        const response = await dbx.filesUpload({
+            path: '/citas.db', // Ruta en Dropbox
+            contents: dbFile,
+            mode: 'overwrite',
+        });
+
+        console.log('Base de datos subida a Dropbox:', response.result);
+        return true;
+    } catch (error) {
+        console.error('Error al subir la base de datos a Dropbox:', error);
+        return false;
+    }
+};
+
+// Función para descargar la base de datos desde Dropbox
+const descargarBaseDeDatosDesdeDropbox = async () => {
+    try {
+        const dbPath = path.join(__dirname, 'mi_chatbot.db'); // Ruta a tu base de datos SQLite
+
+        // Descargar el archivo desde Dropbox
+        const response = await dbx.filesDownload({ path: '/citas.db' });
+
+        // Guardar el archivo descargado
+        fs.writeFileSync(dbPath, response.result.fileBinary);
+        console.log('Base de datos descargada desde Dropbox.');
+        return true;
+    } catch (error) {
+        console.error('Error al descargar la base de datos desde Dropbox:', error);
+        return false;
+    }
+};
 
 // Objeto global para almacenar datos temporales del usuario
 const userData = {};
@@ -38,6 +83,9 @@ const agendarCita = async (cedula, nombre, celular, fecha, hora) => {
             // Enviar correo
             const mensajeCorreo = { cedula, nombre, celular, fecha, hora };
             await enviarCorreo(process.env.GMAIL_USER, 'Nueva cita agendada', mensajeCorreo);
+
+            // Subir la base de datos a Dropbox después de agendar la cita
+            await subirBaseDeDatosADropbox();
 
             return `✅ Cita agendada para la fecha ${fecha} a las ${hora}.`;
         } else {
@@ -174,7 +222,6 @@ const flowAgendarCita = addKeyword(['1'])
     )
     .addAnswer('Si quiere volver al menú principal digite 0', null, null, [flowVolverMenu]);
 
-
 // Flujo para cancelar cita
 const flowCancelarCita = addKeyword(['4'])
     .addAnswer('Por favor, escribe tu número de cédula para cancelar tu cita:', { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
@@ -245,6 +292,9 @@ const flowCancelarCita = addKeyword(['4'])
                 console.log('Resultado de eliminarCitaEnSQLite:', resultado); // Depuración
 
                 if (resultado) {
+                    // Subir la base de datos a Dropbox después de cancelar la cita
+                    await subirBaseDeDatosADropbox();
+
                     await flowDynamic([
                         `✅ La cita del ${citaSeleccionada.fecha} a las ${citaSeleccionada.hora} ha sido cancelada.`,
                     ]);
@@ -305,7 +355,7 @@ const flowInfoConsultorio = addKeyword(['3'])
     .addAnswer('Si quiere volver al menú principal digite 0', null, null, [flowVolverMenu]);
 
 // Menú principal
-const flowMenu = addKeyword(['hola', 'menu', 'inicio', 'buenas', 'buen', 'buenos', 'doctor','ola','cita','consultar','necesito','programar','quiero','solicitar','solicito','para','consulta','una','hello','hi','good','morning','evenging','nigth','afternoon','medico','doc','juan','carlos','dr','señor','rosas','galeno','medicina'])
+const flowMenu = addKeyword(['hola', 'menu', 'inicio', 'buenas', 'buen', 'buenos', 'doctor','ola','cita','consultar','necesito','programar','quiero','solicitar','solicito','para','consulta','una','hello','hi','good','morning','evenging','nigth','afternoon','medico','doc','dr','señor','medicina'])
     .addAnswer(
         [
             'Consultorio doctor Juan Carlos Rosas',
@@ -323,6 +373,9 @@ const flowMenu = addKeyword(['hola', 'menu', 'inicio', 'buenas', 'buen', 'buenos
 
 // Configuración del bot
 const main = async () => {
+    // Descargar la base de datos desde Dropbox al iniciar
+    await descargarBaseDeDatosDesdeDropbox();
+
     const adapterDB = new MockAdapter();
     const adapterFlow = createFlow([flowMenu]);
     const adapterProvider = createProvider(BaileysProvider);
