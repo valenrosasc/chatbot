@@ -2,10 +2,10 @@
   key: {
     remoteJid: '573003725551@s.whatsapp.net',
     fromMe: false,
-    id: '3AD3D303E20D8061ED66',
+    id: '3A2564D6585F9E814BAB',
     participant: undefined
   },
-  messageTimestamp: 1741269062,
+  messageTimestamp: 1741292626,
   pushName: 'Valentina Rosas',
   broadcast: false,
   message: Message {
@@ -20,8 +20,8 @@
   from: '573003725551'
 }
 [QUEUE_SE_ENVIO]:  {
-  ref: 'ans_03c3920e-a7c5-4c39-8aa6-e867a359c1e8',
-  keyword: 'key_0bebc16f-af7f-4809-aed0-efe0cd9d3d4d',
+  ref: 'ans_c412c30a-12f4-4249-8d1f-17734615c872',
+  keyword: 'key_333f66da-2cac-4467-868d-1415af68a5c5',
   answer: 'Consultorio doctor Juan Carlos Rosas\n' +
     '🙌 ¡Bienvenido al sistema de citas! Estas son las opciones disponibles:\n' +
     '(Seleccione el numero correspondientes de la opción a elegir)\n' +
@@ -49,16 +49,94 @@
     keyword: {},
     callback: false
   },
-  refSerialize: '6b30834b3d7f2f26591d16628a3c0ea5'
+  refSerialize: 'd5483d03d2fe27c5bdbc904086e41732'
 }
 [handleMsg]:  {
   key: {
     remoteJid: '573003725551@s.whatsapp.net',
     fromMe: false,
-    id: '3A1F4ACD09E78B9280B6',
+    id: '3AD1848CDDC4D9920077',
     participant: undefined
   },
-  messageTimestamp: 1741269065,
+  messageTimestamp: 1741292630,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    conversation: '4',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2,
+      messageSecret: [Uint8Array]
+    }
+  },
+  body: '4',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_ef3b1f19-455c-4789-bf6c-6ac5e6dcaa47',
+  keyword: 'key_63097403-1d4e-485a-ab5b-3a2484cf9462',
+  answer: 'Por favor, escribe tu número de cédula para cancelar tu cita:',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'ac245c2c8d1ad4940d3137795c305339'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3A90F60A75D132E13FAF',
+    participant: undefined
+  },
+  messageTimestamp: 1741292633,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    conversation: '222',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2,
+      messageSecret: [Uint8Array]
+    }
+  },
+  body: '222',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_9070a97c-a1bf-40de-adbc-bf539d98da6b',
+  keyword: 'ans_ef3b1f19-455c-4789-bf6c-6ac5e6dcaa47',
+  answer: 'Por favor, selecciona la cita que deseas cancelar respondiendo con el número correspondiente:',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'fce52a346c13d75eead08a8055d49ef5'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3ABBAE248A091EBF0B4E',
+    participant: undefined
+  },
+  messageTimestamp: 1741292636,
   pushName: 'Valentina Rosas',
   broadcast: false,
   message: Message {
@@ -73,8 +151,205 @@
   from: '573003725551'
 }
 [QUEUE_SE_ENVIO]:  {
-  ref: 'ans_5fb94552-f462-4ad2-9209-877373469c01',
-  keyword: 'key_3cf6886f-a0e2-4d8b-88f5-02f61ad8d9a5',
+  ref: 'ans_aca11cd0-7095-473d-8c6e-389ab17a8167',
+  keyword: 'ans_9070a97c-a1bf-40de-adbc-bf539d98da6b',
+  answer: 'Por favor, responde *SI* para confirmar o *NO* para volver al menú.',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'b2b090f08fc59c0011fc445a4698e794'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3A0953DC23EA017ED8AC',
+    participant: undefined
+  },
+  messageTimestamp: 1741292638,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    conversation: 'Si',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2,
+      messageSecret: [Uint8Array]
+    }
+  },
+  body: 'Si',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_bfe4cc41-1a90-4b2c-b332-75256d218109',
+  keyword: 'ans_aca11cd0-7095-473d-8c6e-389ab17a8167',
+  answer: '¿Deseas volver al menú principal? Presiona *0* para volver al menú.',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: '903ce060a47b0460be62a835e73bbd99'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3A27F126FDED8E3829F5',
+    participant: undefined
+  },
+  messageTimestamp: 1741292829,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    conversation: '0',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2,
+      messageSecret: [Uint8Array]
+    }
+  },
+  body: '0',
+  from: '573003725551'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3A456384D65CB3415534',
+    participant: undefined
+  },
+  messageTimestamp: 1741292834,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    conversation: '3',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2,
+      messageSecret: [Uint8Array]
+    }
+  },
+  body: '3',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_0122485b-98ce-48e3-a677-24d0bf12574f',
+  keyword: 'key_bd80fbf6-7f29-448c-8231-90e9066db24c',
+  answer: '📍 Dirección: Calle 21 #26-08 Esquina clínica Fatima, San juan de Pasto.\n' +
+    '🕒 Horarios: Lunes a viernes, 15:00 PM – 18:00 PM.\n' +
+    '📞 Teléfono: 3161044386- 602 7212171',
+  options: {
+    media: null,
+    buttons: [],
+    capture: false,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: false
+  },
+  refSerialize: '98021a06cb5e80399a8fd212ec66291a'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_169643cf-60d2-4322-a37e-2b6d72902985',
+  keyword: 'ans_0122485b-98ce-48e3-a677-24d0bf12574f',
+  answer: 'Si quiere volver al menú principal digite 0',
+  options: {
+    media: null,
+    buttons: [],
+    capture: false,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [ [Object], [Object] ],
+    keyword: {},
+    callback: false
+  },
+  refSerialize: '72fe1a5af05245b5ab3c38838cd0dd4a'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3A045301B1239907B761',
+    participant: undefined
+  },
+  messageTimestamp: 1741292841,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    conversation: '0',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2,
+      messageSecret: [Uint8Array]
+    }
+  },
+  body: '0',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_cd1fd08f-86cf-4220-ad46-fbddacfe7e8e',
+  keyword: 'key_497f9601-8fed-4333-a096-0190db3965b9',
+  answer: 'Volviendo al menú principal...',
+  options: {
+    media: null,
+    buttons: [],
+    capture: false,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: '688300ba3a8a810fa3c2d236937ed924'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3A92410C34E001491B7B',
+    participant: undefined
+  },
+  messageTimestamp: 1741292843,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    conversation: '1',
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2,
+      messageSecret: [Uint8Array]
+    }
+  },
+  body: '1',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_7b31e22f-46fe-45cd-8da8-b2ef5a98ec5a',
+  keyword: 'key_22273e04-f66b-49bf-9430-9bbff3ef4f34',
   answer: 'Por favor, escribe tu número de cédula:',
   options: {
     media: null,
@@ -88,32 +363,32 @@
     keyword: {},
     callback: true
   },
-  refSerialize: '6f9867d9a064f1f56fe792f46472d2d2'
+  refSerialize: 'e24f4ad766fa25a872f3c4cdd737220d'
 }
 [handleMsg]:  {
   key: {
     remoteJid: '573003725551@s.whatsapp.net',
     fromMe: false,
-    id: '3A3A971F9726FA37316B',
+    id: '3A44446653FEFE7C7C9B',
     participant: undefined
   },
-  messageTimestamp: 1741269072,
+  messageTimestamp: 1741292847,
   pushName: 'Valentina Rosas',
   broadcast: false,
   message: Message {
-    conversation: '1004235',
+    conversation: '1004',
     messageContextInfo: MessageContextInfo {
       deviceListMetadata: [DeviceListMetadata],
       deviceListMetadataVersion: 2,
       messageSecret: [Uint8Array]
     }
   },
-  body: '1004235',
+  body: '1004',
   from: '573003725551'
 }
 [QUEUE_SE_ENVIO]:  {
-  ref: 'ans_6364ccc3-7bbc-4554-ab08-a13003881019',
-  keyword: 'ans_5fb94552-f462-4ad2-9209-877373469c01',
+  ref: 'ans_4c4f4e29-8227-443e-b4d5-3729adf37fdc',
+  keyword: 'ans_7b31e22f-46fe-45cd-8da8-b2ef5a98ec5a',
   answer: 'Por favor, escribe tu nombre completo:',
   options: {
     media: null,
@@ -127,32 +402,32 @@
     keyword: {},
     callback: true
   },
-  refSerialize: 'aff5773ac7aaa4ae2cce3fd926335a4e'
+  refSerialize: 'ee1d742b5644423a0b95b30afe92ebd3'
 }
 [handleMsg]:  {
   key: {
     remoteJid: '573003725551@s.whatsapp.net',
     fromMe: false,
-    id: '3AE4EAF076D380ACC981',
+    id: '3A7A5D79C72A7297FF7C',
     participant: undefined
   },
-  messageTimestamp: 1741269076,
+  messageTimestamp: 1741292855,
   pushName: 'Valentina Rosas',
   broadcast: false,
   message: Message {
-    conversation: 'Valentina Rosas',
+    conversation: 'Molly Bebe',
     messageContextInfo: MessageContextInfo {
       deviceListMetadata: [DeviceListMetadata],
       deviceListMetadataVersion: 2,
       messageSecret: [Uint8Array]
     }
   },
-  body: 'Valentina Rosas',
+  body: 'Molly Bebe',
   from: '573003725551'
 }
 [QUEUE_SE_ENVIO]:  {
-  ref: 'ans_bbe54c4c-f865-4ef6-9066-86817a424139',
-  keyword: 'ans_6364ccc3-7bbc-4554-ab08-a13003881019',
+  ref: 'ans_b650c69a-a15e-44ff-862e-4d2108106f38',
+  keyword: 'ans_4c4f4e29-8227-443e-b4d5-3729adf37fdc',
   answer: 'Por favor, escribe tu número de celular:',
   options: {
     media: null,
@@ -166,32 +441,32 @@
     keyword: {},
     callback: true
   },
-  refSerialize: 'a314c03781685cd6a851d001320c7056'
+  refSerialize: '93a72d7f3a01c67465886ac758a4f72c'
 }
 [handleMsg]:  {
   key: {
     remoteJid: '573003725551@s.whatsapp.net',
     fromMe: false,
-    id: '3A60FDCFCEDEBA9A46D3',
+    id: '3A2A5A38F3F49D21D1E7',
     participant: undefined
   },
-  messageTimestamp: 1741269079,
+  messageTimestamp: 1741292858,
   pushName: 'Valentina Rosas',
   broadcast: false,
   message: Message {
-    conversation: '30037',
+    conversation: '30036',
     messageContextInfo: MessageContextInfo {
       deviceListMetadata: [DeviceListMetadata],
       deviceListMetadataVersion: 2,
       messageSecret: [Uint8Array]
     }
   },
-  body: '30037',
+  body: '30036',
   from: '573003725551'
 }
 [QUEUE_SE_ENVIO]:  {
-  ref: 'ans_c1842530-880b-47cc-a60a-b76526f8f991',
-  keyword: 'ans_bbe54c4c-f865-4ef6-9066-86817a424139',
+  ref: 'ans_feb74079-b70d-4fc0-9021-9075ad7c88fd',
+  keyword: 'ans_b650c69a-a15e-44ff-862e-4d2108106f38',
   answer: 'Recuerda que la atención está disponible únicamente de lunes a viernes.',
   options: {
     media: null,
@@ -205,11 +480,11 @@
     keyword: {},
     callback: false
   },
-  refSerialize: '7c57e8e83d1a4c3e90096e84a409262f'
+  refSerialize: '46d2bc10bd8500507c736f98602b87a5'
 }
 [QUEUE_SE_ENVIO]:  {
-  ref: 'ans_cf861147-5d40-49f7-8cb1-4fdf39e8e25e',
-  keyword: 'ans_c1842530-880b-47cc-a60a-b76526f8f991',
+  ref: 'ans_81a74e86-e398-422a-9449-e10510a171c0',
+  keyword: 'ans_feb74079-b70d-4fc0-9021-9075ad7c88fd',
   answer: '¿En qué fecha deseas agendar tu cita? (Selecciona una de las siguientes opciones):',
   options: {
     media: null,
@@ -223,11 +498,11 @@
     keyword: {},
     callback: true
   },
-  refSerialize: 'a410033f53396342d0c83ab6e867f00d'
+  refSerialize: 'f25d5b77b040f21c22ba7c54b92ffa73'
 }
 [QUEUE_SE_ENVIO]:  {
-  ref: 'ans_7cbbbf97-f1e4-4542-8aea-a4c31ed3d719',
-  keyword: 'ans_cf861147-5d40-49f7-8cb1-4fdf39e8e25e',
+  ref: 'ans_385934cb-4004-4416-b229-14b2a33a74ea',
+  keyword: 'ans_81a74e86-e398-422a-9449-e10510a171c0',
   answer: 'Por favor, selecciona una fecha respondiendo con el número correspondiente:',
   options: {
     media: null,
@@ -241,16 +516,16 @@
     keyword: {},
     callback: true
   },
-  refSerialize: '8e249330184bf6b212fb5a73c7be6bb5'
+  refSerialize: '1bc994baf346ebcaafdbf2e312c77ae0'
 }
 [handleMsg]:  {
   key: {
     remoteJid: '573003725551@s.whatsapp.net',
     fromMe: false,
-    id: '3AC7BC67FD5AD87C481F',
+    id: '3A4185164CD47E4159E9',
     participant: undefined
   },
-  messageTimestamp: 1741269085,
+  messageTimestamp: 1741292873,
   pushName: 'Valentina Rosas',
   broadcast: false,
   message: Message {
@@ -265,8 +540,8 @@
   from: '573003725551'
 }
 [QUEUE_SE_ENVIO]:  {
-  ref: 'ans_b1874889-56cc-40b9-ab44-ce4416641e13',
-  keyword: 'ans_7cbbbf97-f1e4-4542-8aea-a4c31ed3d719',
+  ref: 'ans_579e17d6-7b95-4921-84da-9815d21c7136',
+  keyword: 'ans_385934cb-4004-4416-b229-14b2a33a74ea',
   answer: 'Elige un horario para tu cita respondiendo con el número correspondiente:\n' +
     '1. 15:00\n' +
     '2. 15:30\n' +
@@ -286,32 +561,32 @@
     keyword: {},
     callback: true
   },
-  refSerialize: '13336bfdf4c87f9974e2ba428568c356'
+  refSerialize: '2907bc68da8ea9075de81a455f901794'
 }
 [handleMsg]:  {
   key: {
     remoteJid: '573003725551@s.whatsapp.net',
     fromMe: false,
-    id: '3A174FF6DE12AA91D190',
+    id: '3A6A13E079BF226BF4AD',
     participant: undefined
   },
-  messageTimestamp: 1741269090,
+  messageTimestamp: 1741292877,
   pushName: 'Valentina Rosas',
   broadcast: false,
   message: Message {
-    conversation: '1',
+    conversation: '4',
     messageContextInfo: MessageContextInfo {
       deviceListMetadata: [DeviceListMetadata],
       deviceListMetadataVersion: 2,
       messageSecret: [Uint8Array]
     }
   },
-  body: '1',
+  body: '4',
   from: '573003725551'
 }
 [QUEUE_SE_ENVIO]:  {
-  ref: 'ans_a371115f-b7c3-4606-88bb-94f43592c187',
-  keyword: 'ans_b1874889-56cc-40b9-ab44-ce4416641e13',
+  ref: 'ans_55fd29e4-df0b-4277-8c0a-c1c3ed4d3805',
+  keyword: 'ans_579e17d6-7b95-4921-84da-9815d21c7136',
   answer: 'Si quiere volver al menú principal digite 0',
   options: {
     media: null,
@@ -325,433 +600,5 @@
     keyword: {},
     callback: false
   },
-  refSerialize: 'c4b580e9876671cd4407a378846ef45c'
-}
-[handleMsg]:  {
-  key: {
-    remoteJid: '573003725551@s.whatsapp.net',
-    fromMe: false,
-    id: '3AE0F08043AF6819DC9D',
-    participant: undefined
-  },
-  messageTimestamp: 1741269096,
-  pushName: 'Valentina Rosas',
-  broadcast: false,
-  message: Message {
-    conversation: '0',
-    messageContextInfo: MessageContextInfo {
-      deviceListMetadata: [DeviceListMetadata],
-      deviceListMetadataVersion: 2,
-      messageSecret: [Uint8Array]
-    }
-  },
-  body: '0',
-  from: '573003725551'
-}
-[QUEUE_SE_ENVIO]:  {
-  ref: 'ans_c7ae394a-c5ef-47b5-9156-7cfe45e281a9',
-  keyword: 'key_c6018a5d-2a69-4239-8823-c4f37c822bf1',
-  answer: 'Volviendo al menú principal...',
-  options: {
-    media: null,
-    buttons: [],
-    capture: false,
-    child: null,
-    delay: 0,
-    idle: null,
-    ref: null,
-    nested: [],
-    keyword: {},
-    callback: true
-  },
-  refSerialize: 'b4502a666df25ed539db1d1db4e1eccc'
-}
-[handleMsg]:  {
-  key: {
-    remoteJid: '573003725551@s.whatsapp.net',
-    fromMe: false,
-    id: '3AC8B18D42E848501889',
-    participant: undefined
-  },
-  messageTimestamp: 1741271040,
-  pushName: 'Valentina Rosas',
-  broadcast: false,
-  message: Message {
-    conversation: 'Hola',
-    messageContextInfo: MessageContextInfo {
-      deviceListMetadata: [DeviceListMetadata],
-      deviceListMetadataVersion: 2,
-      messageSecret: [Uint8Array]
-    }
-  },
-  body: 'Hola',
-  from: '573003725551'
-}
-[handleMsg]:  {
-  key: {
-    remoteJid: '573003725551@s.whatsapp.net',
-    fromMe: false,
-    id: '3ABD2D44725BFA70EDFA',
-    participant: undefined
-  },
-  messageTimestamp: 1741271050,
-  pushName: 'Valentina Rosas',
-  broadcast: false,
-  message: Message {
-    conversation: 'Hola',
-    messageContextInfo: MessageContextInfo {
-      deviceListMetadata: [DeviceListMetadata],
-      deviceListMetadataVersion: 2,
-      messageSecret: [Uint8Array]
-    }
-  },
-  body: 'Hola',
-  from: '573003725551'
-}
-[QUEUE_SE_ENVIO]:  {
-  ref: 'ans_03c3920e-a7c5-4c39-8aa6-e867a359c1e8',
-  keyword: 'key_0bebc16f-af7f-4809-aed0-efe0cd9d3d4d',
-  answer: 'Consultorio doctor Juan Carlos Rosas\n' +
-    '🙌 ¡Bienvenido al sistema de citas! Estas son las opciones disponibles:\n' +
-    '(Seleccione el numero correspondientes de la opción a elegir)\n' +
-    '*1* - Agendar una cita.\n' +
-    '*2* - Consultar mis citas.\n' +
-    '*3* - Información del consultorio.\n' +
-    '*4* - Cancelar una cita.',
-  options: {
-    media: null,
-    buttons: [],
-    capture: false,
-    child: null,
-    delay: 0,
-    idle: null,
-    ref: null,
-    nested: [
-      [Object], [Object], [Object],
-      [Object], [Object], [Object],
-      [Object], [Object], [Object],
-      [Object], [Object], [Object],
-      [Object], [Object], [Object],
-      [Object], [Object], [Object],
-      [Object], [Object]
-    ],
-    keyword: {},
-    callback: false
-  },
-  refSerialize: '6b30834b3d7f2f26591d16628a3c0ea5'
-}
-[handleMsg]:  {
-  key: {
-    remoteJid: '573003725551@s.whatsapp.net',
-    fromMe: false,
-    id: '3AB33DC4B1989060D233',
-    participant: undefined
-  },
-  messageTimestamp: 1741271054,
-  pushName: 'Valentina Rosas',
-  broadcast: false,
-  message: Message {
-    conversation: '1',
-    messageContextInfo: MessageContextInfo {
-      deviceListMetadata: [DeviceListMetadata],
-      deviceListMetadataVersion: 2,
-      messageSecret: [Uint8Array]
-    }
-  },
-  body: '1',
-  from: '573003725551'
-}
-[QUEUE_SE_ENVIO]:  {
-  ref: 'ans_5fb94552-f462-4ad2-9209-877373469c01',
-  keyword: 'key_3cf6886f-a0e2-4d8b-88f5-02f61ad8d9a5',
-  answer: 'Por favor, escribe tu número de cédula:',
-  options: {
-    media: null,
-    buttons: [],
-    capture: true,
-    child: null,
-    delay: 0,
-    idle: null,
-    ref: null,
-    nested: [],
-    keyword: {},
-    callback: true
-  },
-  refSerialize: '6f9867d9a064f1f56fe792f46472d2d2'
-}
-[handleMsg]:  {
-  key: {
-    remoteJid: '573003725551@s.whatsapp.net',
-    fromMe: false,
-    id: '3AC22BF0CA2E4AB809C0',
-    participant: undefined
-  },
-  messageTimestamp: 1741271058,
-  pushName: 'Valentina Rosas',
-  broadcast: false,
-  message: Message {
-    conversation: '123',
-    messageContextInfo: MessageContextInfo {
-      deviceListMetadata: [DeviceListMetadata],
-      deviceListMetadataVersion: 2,
-      messageSecret: [Uint8Array]
-    }
-  },
-  body: '123',
-  from: '573003725551'
-}
-[QUEUE_SE_ENVIO]:  {
-  ref: 'ans_6364ccc3-7bbc-4554-ab08-a13003881019',
-  keyword: 'ans_5fb94552-f462-4ad2-9209-877373469c01',
-  answer: 'Por favor, escribe tu nombre completo:',
-  options: {
-    media: null,
-    buttons: [],
-    capture: true,
-    child: null,
-    delay: 0,
-    idle: null,
-    ref: null,
-    nested: [],
-    keyword: {},
-    callback: true
-  },
-  refSerialize: 'aff5773ac7aaa4ae2cce3fd926335a4e'
-}
-[handleMsg]:  {
-  key: {
-    remoteJid: '573003725551@s.whatsapp.net',
-    fromMe: false,
-    id: '3A4D26E4BB2EB2E22092',
-    participant: undefined
-  },
-  messageTimestamp: 1741271062,
-  pushName: 'Valentina Rosas',
-  broadcast: false,
-  message: Message {
-    conversation: 'Molly',
-    messageContextInfo: MessageContextInfo {
-      deviceListMetadata: [DeviceListMetadata],
-      deviceListMetadataVersion: 2,
-      messageSecret: [Uint8Array]
-    }
-  },
-  body: 'Molly',
-  from: '573003725551'
-}
-[QUEUE_SE_ENVIO]:  {
-  ref: 'ans_bbe54c4c-f865-4ef6-9066-86817a424139',
-  keyword: 'ans_6364ccc3-7bbc-4554-ab08-a13003881019',
-  answer: 'Por favor, escribe tu número de celular:',
-  options: {
-    media: null,
-    buttons: [],
-    capture: true,
-    child: null,
-    delay: 0,
-    idle: null,
-    ref: null,
-    nested: [],
-    keyword: {},
-    callback: true
-  },
-  refSerialize: 'a314c03781685cd6a851d001320c7056'
-}
-[handleMsg]:  {
-  key: {
-    remoteJid: '573003725551@s.whatsapp.net',
-    fromMe: false,
-    id: '3AB5F34C43F76AD34180',
-    participant: undefined
-  },
-  messageTimestamp: 1741271067,
-  pushName: 'Valentina Rosas',
-  broadcast: false,
-  message: Message {
-    conversation: '300',
-    messageContextInfo: MessageContextInfo {
-      deviceListMetadata: [DeviceListMetadata],
-      deviceListMetadataVersion: 2,
-      messageSecret: [Uint8Array]
-    }
-  },
-  body: '300',
-  from: '573003725551'
-}
-[QUEUE_SE_ENVIO]:  {
-  ref: 'ans_c1842530-880b-47cc-a60a-b76526f8f991',
-  keyword: 'ans_bbe54c4c-f865-4ef6-9066-86817a424139',
-  answer: 'Recuerda que la atención está disponible únicamente de lunes a viernes.',
-  options: {
-    media: null,
-    buttons: [],
-    capture: false,
-    child: null,
-    delay: 0,
-    idle: null,
-    ref: null,
-    nested: [],
-    keyword: {},
-    callback: false
-  },
-  refSerialize: '7c57e8e83d1a4c3e90096e84a409262f'
-}
-[QUEUE_SE_ENVIO]:  {
-  ref: 'ans_cf861147-5d40-49f7-8cb1-4fdf39e8e25e',
-  keyword: 'ans_c1842530-880b-47cc-a60a-b76526f8f991',
-  answer: '¿En qué fecha deseas agendar tu cita? (Selecciona una de las siguientes opciones):',
-  options: {
-    media: null,
-    buttons: [],
-    capture: false,
-    child: null,
-    delay: 0,
-    idle: null,
-    ref: null,
-    nested: [],
-    keyword: {},
-    callback: true
-  },
-  refSerialize: 'a410033f53396342d0c83ab6e867f00d'
-}
-[QUEUE_SE_ENVIO]:  {
-  ref: 'ans_7cbbbf97-f1e4-4542-8aea-a4c31ed3d719',
-  keyword: 'ans_cf861147-5d40-49f7-8cb1-4fdf39e8e25e',
-  answer: 'Por favor, selecciona una fecha respondiendo con el número correspondiente:',
-  options: {
-    media: null,
-    buttons: [],
-    capture: true,
-    child: null,
-    delay: 0,
-    idle: null,
-    ref: null,
-    nested: [],
-    keyword: {},
-    callback: true
-  },
-  refSerialize: '8e249330184bf6b212fb5a73c7be6bb5'
-}
-[handleMsg]:  {
-  key: {
-    remoteJid: '573003725551@s.whatsapp.net',
-    fromMe: false,
-    id: '3A829793EC5EE5759A8F',
-    participant: undefined
-  },
-  messageTimestamp: 1741271071,
-  pushName: 'Valentina Rosas',
-  broadcast: false,
-  message: Message {
-    conversation: '1',
-    messageContextInfo: MessageContextInfo {
-      deviceListMetadata: [DeviceListMetadata],
-      deviceListMetadataVersion: 2,
-      messageSecret: [Uint8Array]
-    }
-  },
-  body: '1',
-  from: '573003725551'
-}
-[QUEUE_SE_ENVIO]:  {
-  ref: 'ans_b1874889-56cc-40b9-ab44-ce4416641e13',
-  keyword: 'ans_7cbbbf97-f1e4-4542-8aea-a4c31ed3d719',
-  answer: 'Elige un horario para tu cita respondiendo con el número correspondiente:\n' +
-    '1. 15:00\n' +
-    '2. 15:30\n' +
-    '3. 16:00\n' +
-    '4. 16:30\n' +
-    '5. 17:00\n' +
-    '6. 17:30',
-  options: {
-    media: null,
-    buttons: [],
-    capture: true,
-    child: null,
-    delay: 0,
-    idle: null,
-    ref: null,
-    nested: [],
-    keyword: {},
-    callback: true
-  },
-  refSerialize: '13336bfdf4c87f9974e2ba428568c356'
-}
-[handleMsg]:  {
-  key: {
-    remoteJid: '573003725551@s.whatsapp.net',
-    fromMe: false,
-    id: '3A3EF8A4808E000C6998',
-    participant: undefined
-  },
-  messageTimestamp: 1741271074,
-  pushName: 'Valentina Rosas',
-  broadcast: false,
-  message: Message {
-    conversation: '2',
-    messageContextInfo: MessageContextInfo {
-      deviceListMetadata: [DeviceListMetadata],
-      deviceListMetadataVersion: 2,
-      messageSecret: [Uint8Array]
-    }
-  },
-  body: '2',
-  from: '573003725551'
-}
-[QUEUE_SE_ENVIO]:  {
-  ref: 'ans_a371115f-b7c3-4606-88bb-94f43592c187',
-  keyword: 'ans_b1874889-56cc-40b9-ab44-ce4416641e13',
-  answer: 'Si quiere volver al menú principal digite 0',
-  options: {
-    media: null,
-    buttons: [],
-    capture: false,
-    child: null,
-    delay: 0,
-    idle: null,
-    ref: null,
-    nested: [ [Object], [Object] ],
-    keyword: {},
-    callback: false
-  },
-  refSerialize: 'c4b580e9876671cd4407a378846ef45c'
-}
-[handleMsg]:  {
-  key: {
-    remoteJid: '573003725551@s.whatsapp.net',
-    fromMe: false,
-    id: '3A6C5105651888704B0C',
-    participant: undefined
-  },
-  messageTimestamp: 1741271081,
-  pushName: 'Valentina Rosas',
-  broadcast: false,
-  message: Message {
-    conversation: '0',
-    messageContextInfo: MessageContextInfo {
-      deviceListMetadata: [DeviceListMetadata],
-      deviceListMetadataVersion: 2,
-      messageSecret: [Uint8Array]
-    }
-  },
-  body: '0',
-  from: '573003725551'
-}
-[QUEUE_SE_ENVIO]:  {
-  ref: 'ans_c7ae394a-c5ef-47b5-9156-7cfe45e281a9',
-  keyword: 'key_c6018a5d-2a69-4239-8823-c4f37c822bf1',
-  answer: 'Volviendo al menú principal...',
-  options: {
-    media: null,
-    buttons: [],
-    capture: false,
-    child: null,
-    delay: 0,
-    idle: null,
-    ref: null,
-    nested: [],
-    keyword: {},
-    callback: true
-  },
-  refSerialize: 'b4502a666df25ed539db1d1db4e1eccc'
+  refSerialize: '300639d61b7dadfb98adc54486dc1dd8'
 }

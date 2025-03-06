@@ -272,27 +272,23 @@ const flowCancelarCita = addKeyword(['4'])
     )
     .addAnswer(
         'Por favor, responde *SI* para confirmar o *NO* para volver al menú.',
-        { capture: true }, // Asegura que capture la entrada del usuario
+        { capture: true },
         async (ctx, { flowDynamic, gotoFlow }) => {
             const respuesta = ctx.body ? ctx.body.trim().toLowerCase() : '';
 
-            console.log('Respuesta del usuario:', respuesta); // Depuración
-
             if (respuesta === 'si') {
                 const { cedula, citaSeleccionada } = userData[ctx.from] || {};
-                
+
                 if (!cedula || !citaSeleccionada) {
                     await flowDynamic('⚠️ No se encontró la cita a cancelar. Inténtalo de nuevo.');
                     return gotoFlow(flowCancelarCita);
                 }
 
-                console.log('Datos antes de eliminar:', userData[ctx.from]); // Depuración
-
+                // Eliminar la cita de la base de datos local
                 const resultado = await eliminarCitaEnSQLite(cedula, citaSeleccionada.fecha, citaSeleccionada.hora);
-                console.log('Resultado de eliminarCitaEnSQLite:', resultado); // Depuración
 
                 if (resultado) {
-                    // Subir la base de datos a Dropbox después de cancelar la cita
+                    // Subir la base de datos actualizada a Dropbox
                     await subirBaseDeDatosADropbox();
 
                     await flowDynamic([
@@ -313,7 +309,7 @@ const flowCancelarCita = addKeyword(['4'])
         }
     )
     .addAnswer(
-        '¿Deseas volver al menú principal? Presiona *0* para volver al menú.', // Mensaje para volver al menú
+        '¿Deseas volver al menú principal? Presiona *0* para volver al menú.',
         { capture: true },
         async (ctx, { gotoFlow }) => {
             if (ctx.body === '0') {
