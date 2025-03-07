@@ -31,6 +31,6 @@
     "author": "",
     "license": "ISC",
     "engines": {
-      "node": "18.x" // Especifica la versión de Node.js (usa una LTS como 18.x o 20.x)
+      "node": "18.x" 
     }
   }
