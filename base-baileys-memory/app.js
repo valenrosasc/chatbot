@@ -9,22 +9,70 @@ const moment = require('moment');
 const { Dropbox } = require('dropbox'); // SDK de Dropbox
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
 
 // Importa las funciones para interactuar con SQLite
 const { leerCitasDesdeSQLite, guardarEnSQLite, eliminarCitaEnSQLite, enviarCorreo } = require('./guardarCita');
 
+// Función para obtener un nuevo access token usando el refresh token
+const obtenerNuevoAccessToken = async () => {
+    try {
+        const response = await axios.post(
+            'https://api.dropbox.com/oauth2/token',
+            new URLSearchParams({
+                grant_type: 'refresh_token',
+                refresh_token: process.env.DROPBOX_REFRESH_TOKEN,
+                client_id: process.env.DROPBOX_CLIENT_ID,
+                client_secret: process.env.DROPBOX_CLIENT_SECRET,
+            }),
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            }
+        );
+
+        const accessToken = response.data.access_token;
+        console.log('Nuevo access token generado:', accessToken);
+        return accessToken;
+    } catch (error) {
+        console.error('Error al obtener nuevo access token:', error.response ? error.response.data : error.message);
+        return null;
+    }
+};
+
 // Configura el cliente de Dropbox
-const dbx = new Dropbox({ accessToken: process.env.DROPBOX_ACCESS_TOKEN });
+let dbx = new Dropbox({ accessToken: process.env.DROPBOX_ACCESS_TOKEN });
+
+// Función para renovar el access token si es necesario
+const renovarAccessTokenSiEsNecesario = async () => {
+    try {
+        // Intenta una operación simple para verificar si el token es válido
+        await dbx.usersGetCurrentAccount();
+    } catch (error) {
+        if (error.status === 401) { // Token expirado o inválido
+            const nuevoAccessToken = await obtenerNuevoAccessToken();
+            if (nuevoAccessToken) {
+                dbx = new Dropbox({ accessToken: nuevoAccessToken });
+                console.log('Access token renovado correctamente.');
+            } else {
+                throw new Error('No se pudo renovar el access token.');
+            }
+        } else {
+            throw error;
+        }
+    }
+};
 
 // Función para subir la base de datos a Dropbox
 const subirBaseDeDatosADropbox = async () => {
+    await renovarAccessTokenSiEsNecesario(); // Renueva el token si es necesario
     try {
         const dbPath = path.join(__dirname, 'citas.db');
         const dbFile = fs.readFileSync(dbPath);
 
-        // Subir el archivo a Dropbox
         const response = await dbx.filesUpload({
-            path: '/citas.db', // Ruta en Dropbox
+            path: '/citas.db',
             contents: dbFile,
             mode: 'overwrite',
         });
@@ -39,14 +87,13 @@ const subirBaseDeDatosADropbox = async () => {
 
 // Función para descargar la base de datos desde Dropbox
 const descargarBaseDeDatosDesdeDropbox = async () => {
+    await renovarAccessTokenSiEsNecesario(); // Renueva el token si es necesario
     try {
-        const dbPath = path.join(__dirname, 'mi_chatbot.db'); // Ruta a tu base de datos SQLite
+        const dbPath = path.join(__dirname, 'citas.db');
 
-        // Descargar el archivo desde Dropbox
         const response = await dbx.filesDownload({ path: '/citas.db' });
-
-        // Guardar el archivo descargado
         fs.writeFileSync(dbPath, response.result.fileBinary);
+
         console.log('Base de datos descargada desde Dropbox.');
         return true;
     } catch (error) {
