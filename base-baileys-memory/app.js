@@ -265,6 +265,7 @@ const flowAgendarCita = addKeyword(['1'])
 
             await flowDynamic(resultado);
             userData[ctx.from] = {}; // Reiniciar los datos del usuario
+            return gotoFlow(flowMenu); // Volver al menú principal
         }
     )
     .addAnswer('Si quiere volver al menú principal digite 0', null, null, [flowVolverMenu]);
@@ -416,20 +417,59 @@ const flowMenu = addKeyword(['hola', 'menu', 'inicio', 'buenas', 'buen', 'buenos
 
 // Configuración del bot
 const main = async () => {
-    // Descargar la base de datos desde Dropbox al iniciar
-    await descargarBaseDeDatosDesdeDropbox();
+    try {
+        console.log('Iniciando bot...');
 
-    const adapterDB = new MockAdapter();
-    const adapterFlow = createFlow([flowMenu]);
-    const adapterProvider = createProvider(BaileysProvider);
+        // Descargar la base de datos desde Dropbox al iniciar
+        await descargarBaseDeDatosDesdeDropbox();
 
-    await createBot({
-        flow: adapterFlow,
-        provider: adapterProvider,
-        database: adapterDB,
-    });
+        const adapterDB = new MockAdapter();
+        const adapterFlow = createFlow([flowMenu]);
+        const adapterProvider = createProvider(BaileysProvider);
 
-    await QRPortalWeb();
+        console.log('Conectando con el proveedor...');
+        const bot = await createBot({
+            flow: adapterFlow,
+            provider: adapterProvider,
+            database: adapterDB,
+        });
+
+        console.log('Proveedor conectado y listo 🚀');
+
+        // Obtener el socket de Baileys
+        const socket = adapterProvider.getInstance();
+
+        // Función para enviar actualizaciones de presencia
+        const sendPresenceUpdate = () => {
+            socket.sendPresenceUpdate('available'); // Envía "estoy en línea"
+            console.log('Actualización de presencia enviada.');
+        };
+
+        // Enviar actualizaciones de presencia cada 60 segundos
+        setInterval(sendPresenceUpdate, 60000);
+
+        // Manejar eventos de conexión
+        socket.ev.on('connection.update', (update) => {
+            const { connection, qr } = update;
+
+            if (connection === 'close') {
+                console.log('Conexión cerrada. Reconectando...');
+                // Aquí puedes agregar lógica para reconectar automáticamente
+            }
+
+            if (connection === 'open') {
+                console.log('Conexión establecida correctamente.');
+            }
+
+            if (qr) {
+                console.log('Escanea este código QR:', qr);
+            }
+        });
+
+        await QRPortalWeb();
+    } catch (error) {
+        console.error('Error al iniciar el bot:', error);
+    }
 };
 
 main();
