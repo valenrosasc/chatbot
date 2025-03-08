@@ -423,6 +423,25 @@ const main = async () => {
     const adapterFlow = createFlow([flowMenu]);
     const adapterProvider = createProvider(BaileysProvider);
 
+    // Escuchar eventos de conexión
+    adapterProvider.on('connection.update', (update) => {
+        const { connection, lastDisconnect } = update;
+        if (connection === 'close') {
+            const shouldReconnect = lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut;
+            console.log('Conexión cerrada, reconectando...', shouldReconnect);
+            if (shouldReconnect) {
+                main(); // Reconectar automáticamente
+            }
+        } else if (connection === 'open') {
+            console.log('Conexión abierta');
+        }
+    });
+
+    // Mantener la conexión activa
+    setInterval(() => {
+        adapterProvider.sendPresenceUpdate('available');
+    }, 60000); // Enviar presencia cada 60 segundos
+
     await createBot({
         flow: adapterFlow,
         provider: adapterProvider,
