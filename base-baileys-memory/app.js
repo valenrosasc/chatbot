@@ -426,11 +426,13 @@ const main = async () => {
     // Escuchar eventos de conexión
     adapterProvider.on('connection.update', (update) => {
         const { connection, lastDisconnect } = update;
+
+        // Si la conexión se cierra, reconectar
         if (connection === 'close') {
-            const shouldReconnect = lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut;
+            const shouldReconnect = lastDisconnect.error?.output?.statusCode !== 401; // No reconectar si es un error de autenticación
             console.log('Conexión cerrada, reconectando...', shouldReconnect);
             if (shouldReconnect) {
-                main(); // Reconectar automáticamente
+                setTimeout(main, 5000); // Reconectar después de 5 segundos
             }
         } else if (connection === 'open') {
             console.log('Conexión abierta');
@@ -439,9 +441,10 @@ const main = async () => {
 
     // Mantener la conexión activa
     setInterval(() => {
-        adapterProvider.sendPresenceUpdate('available');
-    }, 60000); // Enviar presencia cada 60 segundos
+        adapterProvider.sendPresenceUpdate('available'); // Enviar presencia cada 60 segundos
+    }, 60000);
 
+    // Crear el bot
     await createBot({
         flow: adapterFlow,
         provider: adapterProvider,
