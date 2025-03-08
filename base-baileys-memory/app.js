@@ -481,16 +481,31 @@ const main = async () => {
 
         // Escuchar eventos de conexión
         adapterProvider.on('connection.update', (update) => {
+            console.log('Actualización de conexión:', update);
             const { connection, lastDisconnect } = update;
 
             if (connection === 'close') {
-                const shouldReconnect = lastDisconnect.error?.output?.statusCode !== 401; // No reconectar si es un error de autenticación
-                console.log('Conexión cerrada, reconectando...', shouldReconnect);
+                console.log('Conexión cerrada. Última desconexión:', lastDisconnect);
+                const shouldReconnect = lastDisconnect.error?.output?.statusCode !== 401;
                 if (shouldReconnect) {
-                    setTimeout(main, 5000); // Reconectar después de 5 segundos
+                    console.log('Reconectando en 5 segundos...');
+                    setTimeout(main, 5000);
                 }
             } else if (connection === 'open') {
                 console.log('Conexión abierta');
+            }
+        });
+
+        // Filtrar mensajes no deseados
+        adapterProvider.on('message', async (message) => {
+            if (message.fromMe || message.isGroupMsg) {
+                return; // Ignorar mensajes enviados por el propio bot o mensajes de grupos
+            }
+
+            // Procesar solo mensajes de usuarios
+            const userMessage = message.body.toLowerCase();
+            if (userMessage) {
+                console.log('Mensaje recibido:', userMessage);
             }
         });
 
@@ -498,15 +513,30 @@ const main = async () => {
         setInterval(async () => {
             try {
                 if (adapterProvider && adapterProvider.client) {
-                    await adapterProvider.sendPresenceUpdate('available'); // Enviar presencia cada 60 segundos
+                    await adapterProvider.sendPresenceUpdate('available'); // Enviar presencia cada 30 segundos
                     console.log('Presencia enviada correctamente.');
-                } else {
-                    console.log('El cliente de Baileys no está disponible.');
                 }
             } catch (error) {
                 console.error('Error al enviar presencia:', error);
             }
-        }, 60000);
+        }, 30000); // 30 segundos
+
+        // Verificar el estado de la conexión periódicamente
+        const checkConnection = async () => {
+            try {
+                if (adapterProvider && adapterProvider.client) {
+                    const state = adapterProvider.client.state;
+                    if (state !== 'open') {
+                        console.log('Conexión no activa. Reconectando...');
+                        await main(); // Reiniciar la conexión
+                    }
+                }
+            } catch (error) {
+                console.error('Error al verificar la conexión:', error);
+            }
+        };
+
+        setInterval(checkConnection, 60000); // Verificar cada 60 segundos
 
         // Crear el bot
         await createBot({
