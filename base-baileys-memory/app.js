@@ -545,7 +545,8 @@ const main = async () => {
             database: adapterDB,
         });
 
-        await QRPortalWeb();
+        // Iniciar el portal web en el puerto 10000
+        await QRPortalWeb({ port: 10000 });
     } catch (error) {
         console.error('Error en la función main:', error);
     }
