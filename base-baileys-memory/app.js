@@ -172,101 +172,129 @@ const flowVolverMenu = addKeyword(['0'])
     });
 
 // Flujo para agendar cita
-const flowCancelarCita = addKeyword(['4'])
-    .addAnswer('Por favor, escribe tu número de cédula para cancelar tu cita:', { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
+const flowAgendarCita = addKeyword(['1'])
+    .addAnswer('Por favor, escribe tu número de cédula:', { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
         try {
             const cedula = ctx.body.trim();
             if (!/^\d+$/.test(cedula)) {
                 await flowDynamic('⚠️ La cédula debe contener solo números. Intenta nuevamente.');
-                return gotoFlow(flowCancelarCita); // Reiniciar el flujo
+                return gotoFlow(flowAgendarCita); // Reiniciar el flujo
             }
-
-            const citas = await leerCitasDesdeSQLite();
-            const citasUsuario = citas.filter((cita) => cita.cedula === cedula);
-
-            if (citasUsuario.length === 0) {
-                await flowDynamic('No tienes citas agendadas.');
-                return gotoFlow(flowMenu); // Volver al menú principal
-            }
-
-            userData[ctx.from] = { ...userData[ctx.from], cedula, citas: citasUsuario };
-
-            let mensaje = 'Estas son tus citas agendadas:\n';
-            citasUsuario.forEach((cita, index) => {
-                mensaje += `${index + 1}. Fecha: ${cita.fecha}, Hora: ${cita.hora}\n`;
-            });
-
-            await flowDynamic(mensaje);
+            userData[ctx.from] = { ...userData[ctx.from], cedula };
+            await flowDynamic('✅ Cédula registrada correctamente.');
         } catch (error) {
-            console.error('Error en el flujo de cancelar cita:', error);
+            console.error('Error en el flujo de agendar cita:', error);
             await flowDynamic('⚠️ Hubo un error al procesar tu solicitud. Intenta nuevamente.');
-            return gotoFlow(flowCancelarCita); // Reiniciar el flujo en caso de error
+            return gotoFlow(flowAgendarCita); // Reiniciar el flujo en caso de error
         }
     })
+    .addAnswer('Por favor, escribe tu nombre completo:', { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
+        try {
+            const nombre = ctx.body.trim();
+            if (!nombre) {
+                await flowDynamic('⚠️ El nombre no puede estar vacío. Intenta nuevamente.');
+                return gotoFlow(flowAgendarCita); // Reiniciar el flujo
+            }
+            userData[ctx.from].nombre = nombre;
+            await flowDynamic('✅ Nombre registrado correctamente.');
+        } catch (error) {
+            console.error('Error en el flujo de agendar cita:', error);
+            await flowDynamic('⚠️ Hubo un error al procesar tu solicitud. Intenta nuevamente.');
+            return gotoFlow(flowAgendarCita); // Reiniciar el flujo en caso de error
+        }
+    })
+    .addAnswer('Por favor, escribe tu número de celular:', { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
+        try {
+            const celular = ctx.body.trim();
+            if (!/^\d+$/.test(celular)) {
+                await flowDynamic('⚠️ El celular debe contener solo números. Intenta nuevamente.');
+                return gotoFlow(flowAgendarCita); // Reiniciar el flujo
+            }
+            userData[ctx.from] = { ...userData[ctx.from], celular };
+            await flowDynamic('✅ Celular registrado correctamente.');
+        } catch (error) {
+            console.error('Error en el flujo de agendar cita:', error);
+            await flowDynamic('⚠️ Hubo un error al procesar tu solicitud. Intenta nuevamente.');
+            return gotoFlow(flowAgendarCita); // Reiniciar el flujo en caso de error
+        }
+    })
+    .addAnswer('Recuerda que la atención está disponible únicamente de lunes a viernes.')
     .addAnswer(
-        'Por favor, selecciona la cita que deseas cancelar respondiendo con el número correspondiente:',
+        '¿En qué fecha deseas agendar tu cita? (Selecciona una de las siguientes opciones):',
+        null,
+        async (ctx, { flowDynamic, gotoFlow }) => {
+            try {
+                const fechasDisponibles = generarFechasDisponibles();
+                const mensajeFechas = fechasDisponibles
+                    .map((fecha, index) => `${index + 1}. ${fecha}`)
+                    .join('\n');
+                await flowDynamic(mensajeFechas);
+            } catch (error) {
+                console.error('Error en el flujo de agendar cita:', error);
+                await flowDynamic('⚠️ Hubo un error al procesar tu solicitud. Intenta nuevamente.');
+                return gotoFlow(flowAgendarCita); // Reiniciar el flujo en caso de error
+            }
+        }
+    )
+    .addAnswer(
+        'Por favor, selecciona una fecha respondiendo con el número correspondiente:',
         { capture: true },
         async (ctx, { flowDynamic, gotoFlow }) => {
             try {
                 const opcion = ctx.body.trim();
                 const indice = parseInt(opcion) - 1;
-                const { cedula, citas } = userData[ctx.from] || {};
+                const fechasDisponibles = generarFechasDisponibles();
 
-                if (isNaN(indice) || indice < 0 || indice >= citas.length) {
+                if (isNaN(indice) || indice < 0 || indice >= fechasDisponibles.length) {
                     await flowDynamic('⚠️ Opción inválida. Por favor, selecciona un número válido.');
-                    return gotoFlow(flowCancelarCita); // Reiniciar el flujo
+                    return gotoFlow(flowAgendarCita); // Reiniciar el flujo
                 }
 
-                const citaSeleccionada = citas[indice];
-                userData[ctx.from].citaSeleccionada = citaSeleccionada;
-
-                await flowDynamic(`¿Estás seguro de que deseas cancelar la cita del ${citaSeleccionada.fecha} a las ${citaSeleccionada.hora}? Responde *SI* para confirmar o *NO* para volver al menú.`);
+                const fechaSeleccionada = fechasDisponibles[indice];
+                userData[ctx.from].fecha = fechaSeleccionada;
+                await flowDynamic(`✅ Fecha seleccionada: ${fechaSeleccionada}`);
             } catch (error) {
-                console.error('Error en el flujo de cancelar cita:', error);
+                console.error('Error en el flujo de agendar cita:', error);
                 await flowDynamic('⚠️ Hubo un error al procesar tu solicitud. Intenta nuevamente.');
-                return gotoFlow(flowCancelarCita); // Reiniciar el flujo en caso de error
+                return gotoFlow(flowAgendarCita); // Reiniciar el flujo en caso de error
             }
         }
     )
     .addAnswer(
-        'Por favor, responde *SI* para confirmar o *NO* para volver al menú.',
+        `Elige un horario para tu cita respondiendo con el número correspondiente:\n` +
+            horariosDisponibles
+                .map((hora, index) => `${index + 1}. ${hora}`)
+                .join('\n'),
         { capture: true },
         async (ctx, { flowDynamic, gotoFlow }) => {
             try {
-                const respuesta = ctx.body ? ctx.body.trim().toLowerCase() : '';
+                const opcion = ctx.body.trim();
+                const indice = parseInt(opcion) - 1;
 
-                if (respuesta === 'si') {
-                    const { cedula, citaSeleccionada } = userData[ctx.from] || {};
-
-                    if (!cedula || !citaSeleccionada) {
-                        await flowDynamic('⚠️ No se encontró la cita a cancelar. Inténtalo de nuevo.');
-                        return gotoFlow(flowCancelarCita); // Reiniciar el flujo
-                    }
-
-                    const resultado = await eliminarCitaEnSQLite(cedula, citaSeleccionada.fecha, citaSeleccionada.hora);
-
-                    if (resultado) {
-                        await subirBaseDeDatosADropbox();
-                        await flowDynamic(`✅ La cita del ${citaSeleccionada.fecha} a las ${citaSeleccionada.hora} ha sido cancelada.`);
-                    } else {
-                        await flowDynamic('⚠️ Hubo un error al cancelar la cita. Intenta nuevamente.');
-                    }
-                } else if (respuesta === 'no') {
-                    await flowDynamic('Volviendo al menú principal...');
-                    return gotoFlow(flowMenu); // Volver al menú principal
-                } else {
-                    await flowDynamic('⚠️ Respuesta inválida. Por favor, responde *SI* o *NO*.');
-                    return gotoFlow(flowCancelarCita); // Reiniciar el flujo
+                if (isNaN(indice) || indice < 0 || indice >= horariosDisponibles.length) {
+                    await flowDynamic('⚠️ Opción inválida. Por favor, selecciona un número válido.');
+                    return gotoFlow(flowAgendarCita); // Reiniciar el flujo
                 }
 
+                const horaSeleccionada = horariosDisponibles[indice];
+                const { cedula, nombre, celular, fecha } = userData[ctx.from] || {};
+
+                if (!cedula || !nombre || !celular || !fecha) {
+                    await flowDynamic('⚠️ Algo salió mal. Por favor, vuelve a intentarlo desde el principio.');
+                    return gotoFlow(flowAgendarCita); // Reiniciar el flujo
+                }
+
+                const resultado = await agendarCita(cedula, nombre, celular, fecha, horaSeleccionada);
+                await flowDynamic(resultado);
                 userData[ctx.from] = {}; // Reiniciar los datos del usuario
             } catch (error) {
-                console.error('Error en el flujo de cancelar cita:', error);
+                console.error('Error en el flujo de agendar cita:', error);
                 await flowDynamic('⚠️ Hubo un error al procesar tu solicitud. Intenta nuevamente.');
-                return gotoFlow(flowCancelarCita); // Reiniciar el flujo en caso de error
+                return gotoFlow(flowAgendarCita); // Reiniciar el flujo en caso de error
             }
         }
-    );
+    )
+    .addAnswer('Si quiere volver al menú principal digite 0', null, null, [flowVolverMenu]);
 
 // Flujo para cancelar cita
 const flowCancelarCita = addKeyword(['4'])
