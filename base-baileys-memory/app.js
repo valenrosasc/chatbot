@@ -182,14 +182,14 @@ const flowAgendarCita = addKeyword(['1'])
             // Validar que la cédula solo contenga números
             if (!/^\d+$/.test(cedula)) {
                 await flowDynamic('⚠️ La cédula debe contener solo números. Por favor, inténtalo de nuevo.');
-                return; // Permanece en el mismo paso
+                return gotoFlow(flowAgendarCita); // Reiniciar el flujo
             }
 
             // Guardar la cédula en los datos temporales del usuario
             userData[ctx.from] = { cedula };
             await flowDynamic('✅ Cédula registrada correctamente.');
 
-            // Ir al siguiente paso (nombre)
+            // Pasar al siguiente paso (nombre)
             return gotoFlow(flowNombre);
         }
     );
@@ -204,14 +204,14 @@ const flowNombre = addKeyword([])
             // Validar que el nombre no esté vacío
             if (!nombre || nombre.trim() === '') {
                 await flowDynamic('⚠️ El nombre no puede estar vacío. Por favor, inténtalo de nuevo.');
-                return; // Permanece en el mismo paso
+                return gotoFlow(flowNombre); // Reiniciar el flujo
             }
 
             // Guardar el nombre en los datos temporales del usuario
             userData[ctx.from].nombre = nombre;
             await flowDynamic('✅ Nombre registrado correctamente.');
 
-            // Ir al siguiente paso (celular)
+            // Pasar al siguiente paso (celular)
             return gotoFlow(flowCelular);
         }
     );
@@ -226,14 +226,14 @@ const flowCelular = addKeyword([])
             // Validar que el celular solo contenga números
             if (!/^\d+$/.test(celular)) {
                 await flowDynamic('⚠️ El celular debe contener solo números. Por favor, inténtalo de nuevo.');
-                return; // Permanece en el mismo paso
+                return gotoFlow(flowCelular); // Reiniciar el flujo
             }
 
             // Guardar el celular en los datos temporales del usuario
             userData[ctx.from].celular = celular;
             await flowDynamic('✅ Celular registrado correctamente.');
 
-            // Ir al siguiente paso (fecha)
+            // Pasar al siguiente paso (fecha)
             return gotoFlow(flowFecha);
         }
     );
@@ -262,7 +262,7 @@ const flowFecha = addKeyword([])
             // Validar que la opción sea un número válido
             if (isNaN(indice) || indice < 0 || indice >= fechasDisponibles.length) {
                 await flowDynamic('⚠️ Opción inválida. Por favor, selecciona un número válido.');
-                return; // Permanece en el mismo paso
+                return gotoFlow(flowFecha); // Reiniciar el flujo
             }
 
             // Guardar la fecha seleccionada en los datos temporales del usuario
@@ -270,7 +270,7 @@ const flowFecha = addKeyword([])
             userData[ctx.from].fecha = fechaSeleccionada;
             await flowDynamic(`✅ Fecha seleccionada: ${fechaSeleccionada}`);
 
-            // Ir al siguiente paso (hora)
+            // Pasar al siguiente paso (hora)
             return gotoFlow(flowHora);
         }
     );
@@ -289,7 +289,7 @@ const flowHora = addKeyword([])
             // Validar que la opción sea un número válido
             if (isNaN(indice) || indice < 0 || indice >= horariosDisponibles.length) {
                 await flowDynamic('⚠️ Opción inválida. Por favor, selecciona un número válido.');
-                return; // Permanece en el mismo paso
+                return gotoFlow(flowHora); // Reiniciar el flujo
             }
 
             // Obtener los datos del usuario
