@@ -190,7 +190,6 @@ const flowAgendarCita = addKeyword(['1'])
             await flowDynamic('✅ Cédula registrada correctamente.');
 
             // Ir al siguiente paso (nombre)
-            console.log('Pasando a flowNombre...'); // Log para depuración
             return gotoFlow(flowNombre);
         }
     );
@@ -209,12 +208,10 @@ const flowNombre = addKeyword([])
             }
 
             // Guardar el nombre en los datos temporales del usuario
-            userData[ctx.from] = userData[ctx.from] || {}; // Asegúrate de que el objeto exista
             userData[ctx.from].nombre = nombre;
             await flowDynamic('✅ Nombre registrado correctamente.');
 
             // Ir al siguiente paso (celular)
-            console.log('Pasando a flowCelular...'); // Log para depuración
             return gotoFlow(flowCelular);
         }
     );
@@ -237,7 +234,6 @@ const flowCelular = addKeyword([])
             await flowDynamic('✅ Celular registrado correctamente.');
 
             // Ir al siguiente paso (fecha)
-            console.log('Pasando a flowFecha...'); // Log para depuración
             return gotoFlow(flowFecha);
         }
     );
@@ -319,6 +315,7 @@ const flowHora = addKeyword([])
             return gotoFlow(flowMenu);
         }
     );
+
 // Flujo para cancelar cita
 const flowCancelarCita = addKeyword(['4'])
     .addAnswer('Por favor, escribe tu número de cédula para cancelar tu cita:', { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
