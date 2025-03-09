@@ -173,58 +173,70 @@ const flowVolverMenu = addKeyword(['0'])
 
 // Flujo para agendar cita
 const flowAgendarCita = addKeyword(['1'])
-    .addAnswer('Por favor, escribe tu número de cédula (solo números):', { capture: true }, async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
-        const cedula = ctx.body.trim();
+    .addAnswer(
+        'Por favor, escribe tu número de cédula (solo números):',
+        { capture: true },
+        async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
+            const cedula = ctx.body.trim();
 
-        // Validar que la cédula solo contenga números
-        if (!/^\d+$/.test(cedula)) {
-            await flowDynamic('⚠️ La cédula debe contener solo números. Intenta nuevamente.');
-            return gotoFlow(flowAgendarCita); // Reiniciar el flujo desde el principio
+            // Validar que la cédula solo contenga números
+            if (!/^\d+$/.test(cedula)) {
+                await flowDynamic('⚠️ La cédula debe contener solo números. Intenta nuevamente.');
+                return gotoFlow(flowAgendarCita); // Reiniciar el flujo desde el principio
+            }
+
+            // Guardar la cédula en los datos temporales del usuario
+            userData[ctx.from] = { cedula };
+            await flowDynamic('✅ Cédula registrada correctamente.');
+
+            // Ir al siguiente paso (nombre)
+            return gotoFlow(flowNombre);
         }
-
-        // Guardar la cédula en los datos temporales del usuario
-        userData[ctx.from] = { cedula };
-        await flowDynamic('✅ Cédula registrada correctamente.');
-
-        // Ir al siguiente paso (nombre)
-        return gotoFlow(flowNombre);
-    });
+    );
 
 const flowNombre = addKeyword([]) // No necesita una palabra clave, se llama desde el flujo anterior
-    .addAnswer('Por favor, escribe tu nombre completo:', { capture: true }, async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
-        const nombre = ctx.body.trim();
+    .addAnswer(
+        'Por favor, escribe tu nombre completo:',
+        { capture: true },
+        async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
+            const nombre = ctx.body.trim();
 
-        // Validar que el nombre no esté vacío
-        if (!nombre) {
-            await flowDynamic('⚠️ El nombre no puede estar vacío. Intenta nuevamente.');
-            return gotoFlow(flowNombre); // Repetir este paso
+            // Validar que el nombre no esté vacío
+            if (!nombre) {
+                await flowDynamic('⚠️ El nombre no puede estar vacío. Intenta nuevamente.');
+                return gotoFlow(flowNombre); // Repetir este paso
+            }
+
+            // Guardar el nombre en los datos temporales del usuario
+            userData[ctx.from].nombre = nombre;
+            await flowDynamic('✅ Nombre registrado correctamente.');
+
+            // Ir al siguiente paso (celular)
+            return gotoFlow(flowCelular);
         }
-
-        // Guardar el nombre en los datos temporales del usuario
-        userData[ctx.from].nombre = nombre;
-        await flowDynamic('✅ Nombre registrado correctamente.');
-
-        // Ir al siguiente paso (celular)
-        return gotoFlow(flowCelular);
-    });
+    );
 
 const flowCelular = addKeyword([])
-    .addAnswer('Por favor, escribe tu número de celular (solo números):', { capture: true }, async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
-        const celular = ctx.body.trim();
+    .addAnswer(
+        'Por favor, escribe tu número de celular (solo números):',
+        { capture: true },
+        async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
+            const celular = ctx.body.trim();
 
-        // Validar que el celular solo contenga números
-        if (!/^\d+$/.test(celular)) {
-            await flowDynamic('⚠️ El celular debe contener solo números. Intenta nuevamente.');
-            return gotoFlow(flowCelular); // Repetir este paso
+            // Validar que el celular solo contenga números
+            if (!/^\d+$/.test(celular)) {
+                await flowDynamic('⚠️ El celular debe contener solo números. Intenta nuevamente.');
+                return gotoFlow(flowCelular); // Repetir este paso
+            }
+
+            // Guardar el celular en los datos temporales del usuario
+            userData[ctx.from].celular = celular;
+            await flowDynamic('✅ Celular registrado correctamente.');
+
+            // Ir al siguiente paso (fecha)
+            return gotoFlow(flowFecha);
         }
-
-        // Guardar el celular en los datos temporales del usuario
-        userData[ctx.from].celular = celular;
-        await flowDynamic('✅ Celular registrado correctamente.');
-
-        // Ir al siguiente paso (fecha)
-        return gotoFlow(flowFecha);
-    });
+    );
 
 const flowFecha = addKeyword([])
     .addAnswer('Recuerda que la atención está disponible únicamente de lunes a viernes.')
