@@ -194,7 +194,7 @@ const flowAgendarCita = addKeyword(['1'])
         }
     );
 
-    const flowNombre = addKeyword(['*'])
+    const flowNombre = addKeyword([]) // Cambiado de ['*'] a []
     .addAnswer(
         'Por favor, escribe tu nombre completo:',
         { capture: true },
@@ -202,12 +202,13 @@ const flowAgendarCita = addKeyword(['1'])
             const nombre = ctx.body.trim();
 
             // Validar que el nombre no esté vacío
-            if (!nombre) {
+            if (!nombre || nombre.trim() === '') {
                 await flowDynamic('⚠️ El nombre no puede estar vacío. Por favor, inténtalo de nuevo.');
                 return; // Permanece en el mismo paso
             }
 
             // Guardar el nombre en los datos temporales del usuario
+            userData[ctx.from] = userData[ctx.from] || {}; // Asegúrate de que el objeto exista
             userData[ctx.from].nombre = nombre;
             await flowDynamic('✅ Nombre registrado correctamente.');
 
@@ -215,7 +216,6 @@ const flowAgendarCita = addKeyword(['1'])
             return gotoFlow(flowCelular);
         }
     );
-
 
 const flowCelular = addKeyword([])
     .addAnswer(
