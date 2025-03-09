@@ -194,7 +194,7 @@ const flowAgendarCita = addKeyword(['1'])
         }
     );
 
-const flowNombre = addKeyword([])
+    const flowNombre = addKeyword(['*'])
     .addAnswer(
         'Por favor, escribe tu nombre completo:',
         { capture: true },
@@ -215,6 +215,7 @@ const flowNombre = addKeyword([])
             return gotoFlow(flowCelular);
         }
     );
+
 
 const flowCelular = addKeyword([])
     .addAnswer(
