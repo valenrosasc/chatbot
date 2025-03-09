@@ -174,15 +174,15 @@ const flowVolverMenu = addKeyword(['0'])
 // Flujo para agendar cita
 const flowAgendarCita = addKeyword(['1'])
     .addAnswer(
-        'Por favor, escribe tu número de cédula (solo números):',
+        'Por favor, escribe tu número de cédula (solo números, sin puntos ni guiones):',
         { capture: true },
-        async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
+        async (ctx, { flowDynamic, gotoFlow }) => {
             const cedula = ctx.body.trim();
 
             // Validar que la cédula solo contenga números
             if (!/^\d+$/.test(cedula)) {
-                await flowDynamic('⚠️ La cédula debe contener solo números. Intenta nuevamente.');
-                return gotoFlow(flowAgendarCita); // Reiniciar el flujo desde el principio
+                await flowDynamic('⚠️ La cédula debe contener solo números. Por favor, inténtalo de nuevo.');
+                return; // Permanece en el mismo paso hasta que la cédula sea válida
             }
 
             // Guardar la cédula en los datos temporales del usuario
@@ -194,17 +194,17 @@ const flowAgendarCita = addKeyword(['1'])
         }
     );
 
-const flowNombre = addKeyword([]) // No necesita una palabra clave, se llama desde el flujo anterior
+const flowNombre = addKeyword([])
     .addAnswer(
         'Por favor, escribe tu nombre completo:',
         { capture: true },
-        async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
+        async (ctx, { flowDynamic, gotoFlow }) => {
             const nombre = ctx.body.trim();
 
             // Validar que el nombre no esté vacío
             if (!nombre) {
-                await flowDynamic('⚠️ El nombre no puede estar vacío. Intenta nuevamente.');
-                return gotoFlow(flowNombre); // Repetir este paso
+                await flowDynamic('⚠️ El nombre no puede estar vacío. Por favor, inténtalo de nuevo.');
+                return; // Permanece en el mismo paso hasta que el nombre sea válido
             }
 
             // Guardar el nombre en los datos temporales del usuario
@@ -218,15 +218,15 @@ const flowNombre = addKeyword([]) // No necesita una palabra clave, se llama des
 
 const flowCelular = addKeyword([])
     .addAnswer(
-        'Por favor, escribe tu número de celular (solo números):',
+        'Por favor, escribe tu número de celular (solo números, sin espacios ni guiones):',
         { capture: true },
-        async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
+        async (ctx, { flowDynamic, gotoFlow }) => {
             const celular = ctx.body.trim();
 
             // Validar que el celular solo contenga números
             if (!/^\d+$/.test(celular)) {
-                await flowDynamic('⚠️ El celular debe contener solo números. Intenta nuevamente.');
-                return gotoFlow(flowCelular); // Repetir este paso
+                await flowDynamic('⚠️ El celular debe contener solo números. Por favor, inténtalo de nuevo.');
+                return; // Permanece en el mismo paso hasta que el celular sea válido
             }
 
             // Guardar el celular en los datos temporales del usuario
@@ -243,7 +243,7 @@ const flowFecha = addKeyword([])
     .addAnswer(
         '¿En qué fecha deseas agendar tu cita? (Selecciona una de las siguientes opciones):',
         null,
-        async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
+        async (ctx, { flowDynamic, gotoFlow }) => {
             const fechasDisponibles = generarFechasDisponibles();
             const mensajeFechas = fechasDisponibles
                 .map((fecha, index) => `${index + 1}. ${fecha}`)
@@ -254,7 +254,7 @@ const flowFecha = addKeyword([])
     .addAnswer(
         'Por favor, selecciona una fecha respondiendo con el número correspondiente:',
         { capture: true },
-        async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
+        async (ctx, { flowDynamic, gotoFlow }) => {
             const opcion = ctx.body.trim();
             const indice = parseInt(opcion) - 1;
             const fechasDisponibles = generarFechasDisponibles();
@@ -262,7 +262,7 @@ const flowFecha = addKeyword([])
             // Validar que la opción sea un número válido
             if (isNaN(indice) || indice < 0 || indice >= fechasDisponibles.length) {
                 await flowDynamic('⚠️ Opción inválida. Por favor, selecciona un número válido.');
-                return gotoFlow(flowFecha); // Repetir este paso
+                return; // Permanece en el mismo paso hasta que la fecha sea válida
             }
 
             // Guardar la fecha seleccionada en los datos temporales del usuario
@@ -282,14 +282,14 @@ const flowHora = addKeyword([])
                 .map((hora, index) => `${index + 1}. ${hora}`)
                 .join('\n'),
         { capture: true },
-        async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
+        async (ctx, { flowDynamic, gotoFlow }) => {
             const opcion = ctx.body.trim();
             const indice = parseInt(opcion) - 1;
 
             // Validar que la opción sea un número válido
             if (isNaN(indice) || indice < 0 || indice >= horariosDisponibles.length) {
                 await flowDynamic('⚠️ Opción inválida. Por favor, selecciona un número válido.');
-                return gotoFlow(flowHora); // Repetir este paso
+                return; // Permanece en el mismo paso hasta que la hora sea válida
             }
 
             // Obtener los datos del usuario
