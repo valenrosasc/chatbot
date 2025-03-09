@@ -173,7 +173,7 @@ const flowVolverMenu = addKeyword(['0'])
 
 // Flujo para agendar cita
 const flowAgendarCita = addKeyword(['1'])
-    .addAnswer('Por favor, escribe tu número de cédula (solo números):', { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
+    .addAnswer('Por favor, escribe tu número de cédula (solo números):', { capture: true }, async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
         const cedula = ctx.body.trim();
 
         // Validar que la cédula solo contenga números
@@ -191,7 +191,7 @@ const flowAgendarCita = addKeyword(['1'])
     });
 
 const flowNombre = addKeyword([]) // No necesita una palabra clave, se llama desde el flujo anterior
-    .addAnswer('Por favor, escribe tu nombre completo:', { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
+    .addAnswer('Por favor, escribe tu nombre completo:', { capture: true }, async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
         const nombre = ctx.body.trim();
 
         // Validar que el nombre no esté vacío
@@ -209,7 +209,7 @@ const flowNombre = addKeyword([]) // No necesita una palabra clave, se llama des
     });
 
 const flowCelular = addKeyword([])
-    .addAnswer('Por favor, escribe tu número de celular (solo números):', { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
+    .addAnswer('Por favor, escribe tu número de celular (solo números):', { capture: true }, async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
         const celular = ctx.body.trim();
 
         // Validar que el celular solo contenga números
@@ -231,7 +231,7 @@ const flowFecha = addKeyword([])
     .addAnswer(
         '¿En qué fecha deseas agendar tu cita? (Selecciona una de las siguientes opciones):',
         null,
-        async (ctx, { flowDynamic, gotoFlow }) => {
+        async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
             const fechasDisponibles = generarFechasDisponibles();
             const mensajeFechas = fechasDisponibles
                 .map((fecha, index) => `${index + 1}. ${fecha}`)
@@ -242,7 +242,7 @@ const flowFecha = addKeyword([])
     .addAnswer(
         'Por favor, selecciona una fecha respondiendo con el número correspondiente:',
         { capture: true },
-        async (ctx, { flowDynamic, gotoFlow }) => {
+        async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
             const opcion = ctx.body.trim();
             const indice = parseInt(opcion) - 1;
             const fechasDisponibles = generarFechasDisponibles();
@@ -270,7 +270,7 @@ const flowHora = addKeyword([])
                 .map((hora, index) => `${index + 1}. ${hora}`)
                 .join('\n'),
         { capture: true },
-        async (ctx, { flowDynamic, gotoFlow }) => {
+        async (ctx, { flowDynamic, gotoFlow, endFlow }) => {
             const opcion = ctx.body.trim();
             const indice = parseInt(opcion) - 1;
 
@@ -303,7 +303,6 @@ const flowHora = addKeyword([])
             return gotoFlow(flowMenu);
         }
     );
-    
 // Flujo para cancelar cita
 const flowCancelarCita = addKeyword(['4'])
     .addAnswer('Por favor, escribe tu número de cédula para cancelar tu cita:', { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
