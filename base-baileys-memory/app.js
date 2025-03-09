@@ -190,11 +190,12 @@ const flowAgendarCita = addKeyword(['1'])
             await flowDynamic('✅ Cédula registrada correctamente.');
 
             // Ir al siguiente paso (nombre)
+            console.log('Pasando a flowNombre...'); // Log para depuración
             return gotoFlow(flowNombre);
         }
     );
 
-    const flowNombre = addKeyword([]) // Cambiado de ['*'] a []
+const flowNombre = addKeyword([])
     .addAnswer(
         'Por favor, escribe tu nombre completo:',
         { capture: true },
@@ -213,6 +214,7 @@ const flowAgendarCita = addKeyword(['1'])
             await flowDynamic('✅ Nombre registrado correctamente.');
 
             // Ir al siguiente paso (celular)
+            console.log('Pasando a flowCelular...'); // Log para depuración
             return gotoFlow(flowCelular);
         }
     );
@@ -235,6 +237,7 @@ const flowCelular = addKeyword([])
             await flowDynamic('✅ Celular registrado correctamente.');
 
             // Ir al siguiente paso (fecha)
+            console.log('Pasando a flowFecha...'); // Log para depuración
             return gotoFlow(flowFecha);
         }
     );
