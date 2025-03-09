@@ -182,7 +182,7 @@ const flowAgendarCita = addKeyword(['1'])
             // Validar que la cédula solo contenga números
             if (!/^\d+$/.test(cedula)) {
                 await flowDynamic('⚠️ La cédula debe contener solo números. Por favor, inténtalo de nuevo.');
-                return; // Permanece en el mismo paso hasta que la cédula sea válida
+                return; // Permanece en el mismo paso
             }
 
             // Guardar la cédula en los datos temporales del usuario
@@ -204,7 +204,7 @@ const flowNombre = addKeyword([])
             // Validar que el nombre no esté vacío
             if (!nombre) {
                 await flowDynamic('⚠️ El nombre no puede estar vacío. Por favor, inténtalo de nuevo.');
-                return; // Permanece en el mismo paso hasta que el nombre sea válido
+                return; // Permanece en el mismo paso
             }
 
             // Guardar el nombre en los datos temporales del usuario
@@ -226,7 +226,7 @@ const flowCelular = addKeyword([])
             // Validar que el celular solo contenga números
             if (!/^\d+$/.test(celular)) {
                 await flowDynamic('⚠️ El celular debe contener solo números. Por favor, inténtalo de nuevo.');
-                return; // Permanece en el mismo paso hasta que el celular sea válido
+                return; // Permanece en el mismo paso
             }
 
             // Guardar el celular en los datos temporales del usuario
@@ -262,7 +262,7 @@ const flowFecha = addKeyword([])
             // Validar que la opción sea un número válido
             if (isNaN(indice) || indice < 0 || indice >= fechasDisponibles.length) {
                 await flowDynamic('⚠️ Opción inválida. Por favor, selecciona un número válido.');
-                return; // Permanece en el mismo paso hasta que la fecha sea válida
+                return; // Permanece en el mismo paso
             }
 
             // Guardar la fecha seleccionada en los datos temporales del usuario
@@ -289,7 +289,7 @@ const flowHora = addKeyword([])
             // Validar que la opción sea un número válido
             if (isNaN(indice) || indice < 0 || indice >= horariosDisponibles.length) {
                 await flowDynamic('⚠️ Opción inválida. Por favor, selecciona un número válido.');
-                return; // Permanece en el mismo paso hasta que la hora sea válida
+                return; // Permanece en el mismo paso
             }
 
             // Obtener los datos del usuario
