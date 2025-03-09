@@ -176,13 +176,13 @@ const flowAgendarCita = addKeyword(['1'])
     .addAnswer(
         'Por favor, escribe tu número de cédula (solo números, sin puntos ni guiones):',
         { capture: true },
-        async (ctx, { flowDynamic, gotoFlow }) => {
+        async (ctx, { flowDynamic, endFlow }) => {
             const cedula = ctx.body.trim();
 
             // Validar que la cédula solo contenga números
             if (!/^\d+$/.test(cedula)) {
                 await flowDynamic('⚠️ La cédula debe contener solo números. Por favor, inténtalo de nuevo.');
-                return gotoFlow(flowAgendarCita); // Reiniciar el flujo
+                return endFlow(); // Reiniciar el flujo
             }
 
             // Guardar la cédula en los datos temporales del usuario
@@ -190,131 +190,130 @@ const flowAgendarCita = addKeyword(['1'])
             await flowDynamic('✅ Cédula registrada correctamente.');
 
             // Pasar al siguiente paso (nombre)
-            return gotoFlow(flowNombre);
+            return askForNombre(ctx, { flowDynamic, endFlow });
         }
     );
 
-const flowNombre = addKeyword([])
-    .addAnswer(
-        'Por favor, escribe tu nombre completo:',
-        { capture: true },
-        async (ctx, { flowDynamic, gotoFlow }) => {
-            const nombre = ctx.body.trim();
+// Función para pedir el nombre
+const askForNombre = async (ctx, { flowDynamic, endFlow }) => {
+    await flowDynamic('Por favor, escribe tu nombre completo:');
 
-            // Validar que el nombre no esté vacío
-            if (!nombre || nombre.trim() === '') {
-                await flowDynamic('⚠️ El nombre no puede estar vacío. Por favor, inténtalo de nuevo.');
-                return gotoFlow(flowNombre); // Reiniciar el flujo
-            }
+    // Capturar la respuesta del usuario
+    ctx.onMessage(async (message) => {
+        const nombre = message.body.trim();
 
-            // Guardar el nombre en los datos temporales del usuario
-            userData[ctx.from].nombre = nombre;
-            await flowDynamic('✅ Nombre registrado correctamente.');
-
-            // Pasar al siguiente paso (celular)
-            return gotoFlow(flowCelular);
+        // Validar que el nombre no esté vacío
+        if (!nombre || nombre.trim() === '') {
+            await flowDynamic('⚠️ El nombre no puede estar vacío. Por favor, inténtalo de nuevo.');
+            return askForNombre(ctx, { flowDynamic, endFlow }); // Repetir el paso
         }
-    );
 
-const flowCelular = addKeyword([])
-    .addAnswer(
-        'Por favor, escribe tu número de celular (solo números, sin espacios ni guiones):',
-        { capture: true },
-        async (ctx, { flowDynamic, gotoFlow }) => {
-            const celular = ctx.body.trim();
+        // Guardar el nombre en los datos temporales del usuario
+        userData[ctx.from].nombre = nombre;
+        await flowDynamic('✅ Nombre registrado correctamente.');
 
-            // Validar que el celular solo contenga números
-            if (!/^\d+$/.test(celular)) {
-                await flowDynamic('⚠️ El celular debe contener solo números. Por favor, inténtalo de nuevo.');
-                return gotoFlow(flowCelular); // Reiniciar el flujo
-            }
+        // Pasar al siguiente paso (celular)
+        return askForCelular(ctx, { flowDynamic, endFlow });
+    });
+};
 
-            // Guardar el celular en los datos temporales del usuario
-            userData[ctx.from].celular = celular;
-            await flowDynamic('✅ Celular registrado correctamente.');
+// Función para pedir el celular
+const askForCelular = async (ctx, { flowDynamic, endFlow }) => {
+    await flowDynamic('Por favor, escribe tu número de celular (solo números, sin espacios ni guiones):');
 
-            // Pasar al siguiente paso (fecha)
-            return gotoFlow(flowFecha);
+    // Capturar la respuesta del usuario
+    ctx.onMessage(async (message) => {
+        const celular = message.body.trim();
+
+        // Validar que el celular solo contenga números
+        if (!/^\d+$/.test(celular)) {
+            await flowDynamic('⚠️ El celular debe contener solo números. Por favor, inténtalo de nuevo.');
+            return askForCelular(ctx, { flowDynamic, endFlow }); // Repetir el paso
         }
-    );
 
-const flowFecha = addKeyword([])
-    .addAnswer('Recuerda que la atención está disponible únicamente de lunes a viernes.')
-    .addAnswer(
-        '¿En qué fecha deseas agendar tu cita? (Selecciona una de las siguientes opciones):',
-        null,
-        async (ctx, { flowDynamic, gotoFlow }) => {
-            const fechasDisponibles = generarFechasDisponibles();
-            const mensajeFechas = fechasDisponibles
-                .map((fecha, index) => `${index + 1}. ${fecha}`)
-                .join('\n');
-            await flowDynamic(mensajeFechas);
+        // Guardar el celular en los datos temporales del usuario
+        userData[ctx.from].celular = celular;
+        await flowDynamic('✅ Celular registrado correctamente.');
+
+        // Pasar al siguiente paso (fecha)
+        return askForFecha(ctx, { flowDynamic, endFlow });
+    });
+};
+
+// Función para pedir la fecha
+const askForFecha = async (ctx, { flowDynamic, endFlow }) => {
+    await flowDynamic('Recuerda que la atención está disponible únicamente de lunes a viernes.');
+
+    const fechasDisponibles = generarFechasDisponibles();
+    const mensajeFechas = fechasDisponibles
+        .map((fecha, index) => `${index + 1}. ${fecha}`)
+        .join('\n');
+
+    await flowDynamic(`¿En qué fecha deseas agendar tu cita? (Selecciona una de las siguientes opciones):\n${mensajeFechas}`);
+
+    // Capturar la respuesta del usuario
+    ctx.onMessage(async (message) => {
+        const opcion = message.body.trim();
+        const indice = parseInt(opcion) - 1;
+
+        // Validar que la opción sea un número válido
+        if (isNaN(indice) || indice < 0 || indice >= fechasDisponibles.length) {
+            await flowDynamic('⚠️ Opción inválida. Por favor, selecciona un número válido.');
+            return askForFecha(ctx, { flowDynamic, endFlow }); // Repetir el paso
         }
-    )
-    .addAnswer(
-        'Por favor, selecciona una fecha respondiendo con el número correspondiente:',
-        { capture: true },
-        async (ctx, { flowDynamic, gotoFlow }) => {
-            const opcion = ctx.body.trim();
-            const indice = parseInt(opcion) - 1;
-            const fechasDisponibles = generarFechasDisponibles();
 
-            // Validar que la opción sea un número válido
-            if (isNaN(indice) || indice < 0 || indice >= fechasDisponibles.length) {
-                await flowDynamic('⚠️ Opción inválida. Por favor, selecciona un número válido.');
-                return gotoFlow(flowFecha); // Reiniciar el flujo
-            }
+        // Guardar la fecha seleccionada en los datos temporales del usuario
+        const fechaSeleccionada = fechasDisponibles[indice];
+        userData[ctx.from].fecha = fechaSeleccionada;
+        await flowDynamic(`✅ Fecha seleccionada: ${fechaSeleccionada}`);
 
-            // Guardar la fecha seleccionada en los datos temporales del usuario
-            const fechaSeleccionada = fechasDisponibles[indice];
-            userData[ctx.from].fecha = fechaSeleccionada;
-            await flowDynamic(`✅ Fecha seleccionada: ${fechaSeleccionada}`);
+        // Pasar al siguiente paso (hora)
+        return askForHora(ctx, { flowDynamic, endFlow });
+    });
+};
 
-            // Pasar al siguiente paso (hora)
-            return gotoFlow(flowHora);
+// Función para pedir la hora
+const askForHora = async (ctx, { flowDynamic, endFlow }) => {
+    const mensajeHorarios = horariosDisponibles
+        .map((hora, index) => `${index + 1}. ${hora}`)
+        .join('\n');
+
+    await flowDynamic(`Elige un horario para tu cita respondiendo con el número correspondiente:\n${mensajeHorarios}`);
+
+    // Capturar la respuesta del usuario
+    ctx.onMessage(async (message) => {
+        const opcion = message.body.trim();
+        const indice = parseInt(opcion) - 1;
+
+        // Validar que la opción sea un número válido
+        if (isNaN(indice) || indice < 0 || indice >= horariosDisponibles.length) {
+            await flowDynamic('⚠️ Opción inválida. Por favor, selecciona un número válido.');
+            return askForHora(ctx, { flowDynamic, endFlow }); // Repetir el paso
         }
-    );
 
-const flowHora = addKeyword([])
-    .addAnswer(
-        `Elige un horario para tu cita respondiendo con el número correspondiente:\n` +
-            horariosDisponibles
-                .map((hora, index) => `${index + 1}. ${hora}`)
-                .join('\n'),
-        { capture: true },
-        async (ctx, { flowDynamic, gotoFlow }) => {
-            const opcion = ctx.body.trim();
-            const indice = parseInt(opcion) - 1;
+        // Obtener los datos del usuario
+        const { cedula, nombre, celular, fecha } = userData[ctx.from] || {};
 
-            // Validar que la opción sea un número válido
-            if (isNaN(indice) || indice < 0 || indice >= horariosDisponibles.length) {
-                await flowDynamic('⚠️ Opción inválida. Por favor, selecciona un número válido.');
-                return gotoFlow(flowHora); // Reiniciar el flujo
-            }
-
-            // Obtener los datos del usuario
-            const { cedula, nombre, celular, fecha } = userData[ctx.from] || {};
-
-            // Validar que todos los datos estén completos
-            if (!cedula || !nombre || !celular || !fecha) {
-                await flowDynamic('⚠️ Algo salió mal. Por favor, vuelve a intentarlo desde el principio.');
-                return gotoFlow(flowAgendarCita); // Reiniciar el flujo
-            }
-
-            // Obtener el horario seleccionado
-            const horaSeleccionada = horariosDisponibles[indice];
-
-            // Intentar agendar la cita
-            const resultado = await agendarCita(cedula, nombre, celular, fecha, horaSeleccionada);
-            await flowDynamic(resultado);
-
-            // Reiniciar los datos del usuario
-            userData[ctx.from] = {};
-
-            // Volver al menú principal
-            return gotoFlow(flowMenu);
+        // Validar que todos los datos estén completos
+        if (!cedula || !nombre || !celular || !fecha) {
+            await flowDynamic('⚠️ Algo salió mal. Por favor, vuelve a intentarlo desde el principio.');
+            return endFlow(); // Reiniciar el flujo
         }
-    );
+
+        // Obtener el horario seleccionado
+        const horaSeleccionada = horariosDisponibles[indice];
+
+        // Intentar agendar la cita
+        const resultado = await agendarCita(cedula, nombre, celular, fecha, horaSeleccionada);
+        await flowDynamic(resultado);
+
+        // Reiniciar los datos del usuario
+        userData[ctx.from] = {};
+
+        // Finalizar el flujo
+        return endFlow();
+    });
+};
 
 // Flujo para cancelar cita
 const flowCancelarCita = addKeyword(['4'])
