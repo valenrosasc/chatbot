@@ -171,103 +171,149 @@ const flowVolverMenu = addKeyword(['0'])
         return gotoFlow(flowMenu);
     });
 
-// Flujo para agendar cita
+// Flujo para agendar cita - VERSIÓN SIMPLIFICADA
 const flowAgendarCita = addKeyword(['1'])
-    .addAnswer('Por favor, escribe tu número de cédula:', { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
+    .addAction(async (ctx, { flowDynamic }) => {
+        // Inicializar datos de usuario
+        userData[ctx.from] = {};
+        await flowDynamic('Para agendar una cita, necesito algunos datos.');
+        await flowDynamic('Por favor, escribe tu número de cédula:');
+    })
+    .addAction({ capture: true }, async (ctx, { flowDynamic, fallBack }) => {
         const cedula = ctx.body.trim();
+        
+        // Validar cédula
         if (!/^\d+$/.test(cedula)) {
-            await flowDynamic('⚠️ La cédula debe contener solo números. Intenta nuevamente.');
-            return gotoFlow(flowAgendarCita);
+            await flowDynamic('⚠️ La cédula debe contener solo números.');
+            await flowDynamic('Por favor, escribe tu número de cédula nuevamente:');
+            return fallBack(); // Importante: usar fallBack() para repetir este paso
         }
-        userData[ctx.from] = { ...userData[ctx.from], cedula };
-        console.log('Datos del usuario (cedula):', userData[ctx.from]); // Muestra los datos del usuario
-        await flowDynamic('✅ Cédula registrada correctamente.');
+        
+        // Guardar cédula y continuar
+        userData[ctx.from].cedula = cedula;
+        await flowDynamic('Por favor, escribe tu nombre completo:');
     })
-    .addAnswer('Por favor, escribe tu nombre completo:', { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
+    .addAction({ capture: true }, async (ctx, { flowDynamic, fallBack }) => {
         const nombre = ctx.body.trim();
+        
+        // Validar nombre
         if (!nombre) {
-            await flowDynamic('⚠️ El nombre no puede estar vacío. Intenta nuevamente.');
-            return gotoFlow(flowAgendarCita);
+            await flowDynamic('⚠️ El nombre no puede estar vacío.');
+            await flowDynamic('Por favor, escribe tu nombre completo nuevamente:');
+            return fallBack(); // Importante: usar fallBack() para repetir este paso
         }
-        userData[ctx.from].nombre = nombre; // Guardar el nombre en userData
-        console.log('Datos del usuario (nombre):', userData[ctx.from]); // Muestra los datos del usuario
-        await flowDynamic('✅ Nombre registrado correctamente.');
+        
+        // Guardar nombre y continuar
+        userData[ctx.from].nombre = nombre;
+        await flowDynamic('Por favor, escribe tu número de celular:');
     })
-    .addAnswer('Por favor, escribe tu número de celular:', { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
+    .addAction({ capture: true }, async (ctx, { flowDynamic, fallBack }) => {
         const celular = ctx.body.trim();
+        
+        // Validar celular
         if (!/^\d+$/.test(celular)) {
-            await flowDynamic('⚠️ El celular debe contener solo números. Intenta nuevamente.');
-            return gotoFlow(flowAgendarCita);
+            await flowDynamic('⚠️ El celular debe contener solo números.');
+            await flowDynamic('Por favor, escribe tu número de celular nuevamente:');
+            return fallBack(); // Importante: usar fallBack() para repetir este paso
         }
-        userData[ctx.from] = { ...userData[ctx.from], celular };
-        console.log('Datos del usuario (celular):', userData[ctx.from]); // Muestra los datos del usuario
-        await flowDynamic('✅ Celular registrado correctamente.');
+        
+        // Guardar celular y mostrar fechas disponibles
+        userData[ctx.from].celular = celular;
+        
+        // Generar fechas disponibles
+        const fechasDisponibles = generarFechasDisponibles();
+        userData[ctx.from].fechasDisponibles = fechasDisponibles;
+        
+        let mensajeFechas = 'Selecciona una fecha disponible respondiendo con el número:\n';
+        fechasDisponibles.forEach((fecha, index) => {
+            mensajeFechas += `${index + 1}. ${fecha}\n`;
+        });
+        mensajeFechas += '\nResponde con 0 para volver al menú principal.';
+        
+        await flowDynamic(mensajeFechas);
     })
-    .addAnswer('Recuerda que la atención está disponible únicamente de lunes a viernes.')
-    .addAnswer(
-        '¿En qué fecha deseas agendar tu cita? (Selecciona una de las siguientes opciones):',
-        null,
-        async (ctx, { flowDynamic, gotoFlow }) => {
-            const fechasDisponibles = generarFechasDisponibles();
-
-            // Mostrar las fechas disponibles al usuario
-            const mensajeFechas = fechasDisponibles
-                .map((fecha, index) => `${index + 1}. ${fecha}`)
-                .join('\n');
-
+    .addAction({ capture: true }, async (ctx, { flowDynamic, gotoFlow, fallBack }) => {
+        const opcion = ctx.body.trim();
+        
+        // Opción para volver al menú
+        if (opcion === '0') {
+            await flowDynamic('Volviendo al menú principal...');
+            return gotoFlow(flowMenu);
+        }
+        
+        const indice = parseInt(opcion) - 1;
+        const { fechasDisponibles } = userData[ctx.from];
+        
+        // Validar selección de fecha
+        if (isNaN(indice) || indice < 0 || indice >= fechasDisponibles.length) {
+            await flowDynamic('⚠️ Opción inválida.');
+            
+            // Mostrar fechas nuevamente
+            let mensajeFechas = 'Por favor, selecciona una fecha disponible respondiendo con el número:\n';
+            fechasDisponibles.forEach((fecha, index) => {
+                mensajeFechas += `${index + 1}. ${fecha}\n`;
+            });
+            mensajeFechas += '\nResponde con 0 para volver al menú principal.';
+            
             await flowDynamic(mensajeFechas);
+            return fallBack(); // Importante: usar fallBack() para repetir este paso
         }
-    )
-    .addAnswer(
-        'Por favor, selecciona una fecha respondiendo con el número correspondiente:',
-        { capture: true },
-        async (ctx, { flowDynamic, gotoFlow }) => {
-            const opcion = ctx.body.trim();
-            const indice = parseInt(opcion) - 1;
-            const fechasDisponibles = generarFechasDisponibles();
-
-            if (isNaN(indice) || indice < 0 || indice >= fechasDisponibles.length) {
-                await flowDynamic('⚠️ Opción inválida. Por favor, selecciona un número válido.');
-                return gotoFlow(flowAgendarCita);
-            }
-
-            const fechaSeleccionada = fechasDisponibles[indice];
-            userData[ctx.from].fecha = fechaSeleccionada; // Guardar la fecha seleccionada
-            console.log('Datos del usuario (fecha):', userData[ctx.from]); // Muestra los datos del usuario
-            await flowDynamic(`✅ Fecha seleccionada: ${fechaSeleccionada}`);
+        
+        // Guardar fecha seleccionada y mostrar horarios
+        const fechaSeleccionada = fechasDisponibles[indice];
+        userData[ctx.from].fecha = fechaSeleccionada;
+        
+        let mensajeHorarios = `Fecha seleccionada: ${fechaSeleccionada}\n`;
+        mensajeHorarios += 'Selecciona un horario disponible respondiendo con el número:\n';
+        horariosDisponibles.forEach((hora, index) => {
+            mensajeHorarios += `${index + 1}. ${hora}\n`;
+        });
+        mensajeHorarios += '\nResponde con 0 para volver al menú principal.';
+        
+        await flowDynamic(mensajeHorarios);
+    })
+    .addAction({ capture: true }, async (ctx, { flowDynamic, gotoFlow, fallBack }) => {
+        const opcion = ctx.body.trim();
+        
+        // Opción para volver al menú
+        if (opcion === '0') {
+            await flowDynamic('Volviendo al menú principal...');
+            return gotoFlow(flowMenu);
         }
-    )
-    .addAnswer(
-        `Elige un horario para tu cita respondiendo con el número correspondiente:\n` +
-            horariosDisponibles
-                .map((hora, index) => `${index + 1}. ${hora}`)
-                .join('\n'),
-        { capture: true },
-        async (ctx, { flowDynamic, gotoFlow }) => {
-            const opcion = ctx.body.trim();
-            const indice = parseInt(opcion) - 1;
-
-            if (isNaN(indice) || indice < 0 || indice >= horariosDisponibles.length) {
-                await flowDynamic('⚠️ Opción inválida. Por favor, selecciona un número válido del 1 al 6.');
-                return gotoFlow(flowAgendarCita);
-            }
-
-            const horaSeleccionada = horariosDisponibles[indice];
-            const { cedula, nombre, celular, fecha } = userData[ctx.from] || {};
-
-            if (!cedula || !nombre || !celular || !fecha) {
-                await flowDynamic('⚠️ Algo salió mal. Por favor, vuelve a intentarlo desde el principio.');
-                return gotoFlow(flowAgendarCita);
-            }
-
-            // Guardar la cita en SQLite
-            const resultado = await agendarCita(cedula, nombre, celular, fecha, horaSeleccionada);
-
-            await flowDynamic(resultado);
-            userData[ctx.from] = {}; // Reiniciar los datos del usuario
+        
+        const indice = parseInt(opcion) - 1;
+        
+        // Validar selección de horario
+        if (isNaN(indice) || indice < 0 || indice >= horariosDisponibles.length) {
+            await flowDynamic('⚠️ Opción inválida.');
+            
+            // Mostrar horarios nuevamente
+            let mensajeHorarios = 'Por favor, selecciona un horario disponible respondiendo con el número:\n';
+            horariosDisponibles.forEach((hora, index) => {
+                mensajeHorarios += `${index + 1}. ${hora}\n`;
+            });
+            mensajeHorarios += '\nResponde con 0 para volver al menú principal.';
+            
+            await flowDynamic(mensajeHorarios);
+            return fallBack(); // Importante: usar fallBack() para repetir este paso
         }
-    )
-    .addAnswer('Si quiere volver al menú principal digite 0', null, null, [flowVolverMenu]);
+        
+        // Agendar la cita
+        const horaSeleccionada = horariosDisponibles[indice];
+        const { cedula, nombre, celular, fecha } = userData[ctx.from];
+        
+        const resultado = await agendarCita(cedula, nombre, celular, fecha, horaSeleccionada);
+        await flowDynamic(resultado);
+
+        // Mensaje final
+        await flowDynamic('Si deseas realizar otra operación, presiona 0 para volver al menú principal.');
+    })
+    .addAction({ capture: true }, async (ctx, { gotoFlow }) => {
+        if (ctx.body === '0') {
+            userData[ctx.from] = {}; // Reiniciar datos del usuario
+            return gotoFlow(flowMenu);
+        }
+    });
 
 
 // Flujo para cancelar cita
@@ -320,29 +366,33 @@ const flowCancelarCita = addKeyword(['4'])
     )
     .addAnswer(
         'Por favor, responde *SI* para confirmar o *NO* para volver al menú.',
-        { capture: true }, // Asegura que capture la entrada del usuario
+        { capture: true },
         async (ctx, { flowDynamic, gotoFlow }) => {
             const respuesta = ctx.body ? ctx.body.trim().toLowerCase() : '';
 
-            console.log('Respuesta del usuario:', respuesta); // Depuración
-
             if (respuesta === 'si') {
                 const { cedula, citaSeleccionada } = userData[ctx.from] || {};
-                
+
                 if (!cedula || !citaSeleccionada) {
                     await flowDynamic('⚠️ No se encontró la cita a cancelar. Inténtalo de nuevo.');
                     return gotoFlow(flowCancelarCita);
                 }
 
-                console.log('Datos antes de eliminar:', userData[ctx.from]); // Depuración
-
                 const resultado = await eliminarCitaEnSQLite(cedula, citaSeleccionada.fecha, citaSeleccionada.hora);
-                console.log('Resultado de eliminarCitaEnSQLite:', resultado); // Depuración
 
                 if (resultado) {
                     await flowDynamic([
                         `✅ La cita del ${citaSeleccionada.fecha} a las ${citaSeleccionada.hora} ha sido cancelada.`,
                     ]);
+
+                    // Subir la base de datos actualizada a Dropbox
+                    const subidaExitosa = await subirBaseDeDatosADropbox();
+                    if (!subidaExitosa) {
+                        await flowDynamic('⚠️ Hubo un error al actualizar la base de datos en Dropbox.');
+                    }
+
+                    // Mensaje para volver al menú
+                    await flowDynamic('Si deseas realizar otra operación, presiona *0* para volver al menú principal.');
                 } else {
                     await flowDynamic('⚠️ Hubo un error al cancelar la cita. Intenta nuevamente.');
                 }
@@ -358,7 +408,7 @@ const flowCancelarCita = addKeyword(['4'])
         }
     )
     .addAnswer(
-        '¿Deseas volver al menú principal? Presiona *0* para volver al menú.', // Mensaje para volver al menú
+        'Si deseas realizar otra operación, presiona *0* para volver al menú principal.',
         { capture: true },
         async (ctx, { gotoFlow }) => {
             if (ctx.body === '0') {
@@ -418,7 +468,7 @@ const flowMenu = addKeyword(['hola', 'menu', 'inicio', 'buenas', 'buen', 'buenos
         ],
         null,
         null,
-        [flowAgendarCita, flowConsultarCitas, flowInfoConsultorio, flowCancelarCita]
+        [flowAgendarCita , flowConsultarCitas, flowInfoConsultorio, flowCancelarCita]
     );
 
 // Configuración del bot

@@ -1,0 +1,1063 @@
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3F4758A353FF2643600C',
+    participant: undefined
+  },
+  messageTimestamp: 1741807017,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: 'hola', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: 'hola',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_ab82958f-835e-4f91-aaa0-7896e0d67292',
+  keyword: 'key_85fe8ff6-a25f-4d1a-9eee-13889ef57cb3',
+  answer: 'Consultorio doctor Juan Carlos Rosas\n' +
+    '🙌 ¡Bienvenido al sistema de citas! Estas son las opciones disponibles:\n' +
+    '(Seleccione el numero correspondientes de la opción a elegir)\n' +
+    '*1* - Agendar una cita.\n' +
+    '*2* - Consultar mis citas.\n' +
+    '*3* - Información del consultorio.\n' +
+    '*4* - Cancelar una cita.',
+  options: {
+    media: null,
+    buttons: [],
+    capture: false,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object]
+    ],
+    keyword: {},
+    callback: false
+  },
+  refSerialize: 'dec535aadc0ca9fa60579d02f85be27c'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3F154E672ACB827D7859',
+    participant: undefined
+  },
+  messageTimestamp: 1741807020,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '1', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '1',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_c8467a61-d969-4cca-98a8-32aabb9b04d8',
+  keyword: 'key_6bb58e51-e627-4aa5-86f9-e972d9aec9c4',
+  answer: '__call_action__',
+  options: {
+    media: null,
+    buttons: [],
+    capture: false,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'aac2084fa11a7d55273227f256f0ab0e'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_66879712-745f-4842-983f-7c803b4d1102',
+  keyword: 'ans_c8467a61-d969-4cca-98a8-32aabb9b04d8',
+  answer: '__capture_only_intended__',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: '7289d42267d37d80b71ea6841b95d613'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3F4BDD8C1CCA70A0DA80',
+    participant: undefined
+  },
+  messageTimestamp: 1741807025,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: 'aa', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: 'aa',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_3d6e3bf7-3694-4310-8f82-dd5ddb5d1ba3',
+  keyword: 'ans_66879712-745f-4842-983f-7c803b4d1102',
+  answer: '__capture_only_intended__',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'e0527b5fbae651086616763271479821'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3FB6E75871978E0E34B3',
+    participant: undefined
+  },
+  messageTimestamp: 1741807032,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '22', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '22',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_3d6e3bf7-3694-4310-8f82-dd5ddb5d1ba3',
+  keyword: 'ans_66879712-745f-4842-983f-7c803b4d1102',
+  answer: '__capture_only_intended__',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'e0527b5fbae651086616763271479821'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3FD878190DD98DBE49D1',
+    participant: undefined
+  },
+  messageTimestamp: 1741807036,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage {
+      text: 'valentina',
+      contextInfo: [ContextInfo]
+    },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: 'valentina',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_4f0741d8-1420-4fd1-9ee3-47e9efc1b05d',
+  keyword: 'ans_3d6e3bf7-3694-4310-8f82-dd5ddb5d1ba3',
+  answer: '__capture_only_intended__',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: '29543aca7fb9755b1eb5573fe7e37e24'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3F80ABF19ED2BDD8F129',
+    participant: undefined
+  },
+  messageTimestamp: 1741807039,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: 'aa', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: 'aa',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_7e771919-f94e-497f-9e31-40110d51f42d',
+  keyword: 'ans_4f0741d8-1420-4fd1-9ee3-47e9efc1b05d',
+  answer: '__capture_only_intended__',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'b298d226fa46479d530225ee5d7b8abd'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3FD9B2087FF75CB16AB6',
+    participant: undefined
+  },
+  messageTimestamp: 1741807045,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '33', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '33',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_7e771919-f94e-497f-9e31-40110d51f42d',
+  keyword: 'ans_4f0741d8-1420-4fd1-9ee3-47e9efc1b05d',
+  answer: '__capture_only_intended__',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'b298d226fa46479d530225ee5d7b8abd'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3FD9708525C5D82D78D6',
+    participant: undefined
+  },
+  messageTimestamp: 1741807048,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '8', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '8',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_5f74eee8-3f82-411e-8faf-0e4b755771d2',
+  keyword: 'ans_7e771919-f94e-497f-9e31-40110d51f42d',
+  answer: '__capture_only_intended__',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'a893876991305da8686c6492720c7fb9'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3FE37D01AB63B48438B2',
+    participant: undefined
+  },
+  messageTimestamp: 1741807050,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '1', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '1',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_5f74eee8-3f82-411e-8faf-0e4b755771d2',
+  keyword: 'ans_7e771919-f94e-497f-9e31-40110d51f42d',
+  answer: '__capture_only_intended__',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'a893876991305da8686c6492720c7fb9'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3F51EE4C6FEFF7FFE47C',
+    participant: undefined
+  },
+  messageTimestamp: 1741807052,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '8', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '8',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_8ddfd495-a8e9-4e8e-9c85-9565de79c4c8',
+  keyword: 'ans_5f74eee8-3f82-411e-8faf-0e4b755771d2',
+  answer: '__capture_only_intended__',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'b5dea7e14bf0b8c946ae84784627b75f'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3F4DFF283E9FDAF3A4D5',
+    participant: undefined
+  },
+  messageTimestamp: 1741807054,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '1', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '1',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_8ddfd495-a8e9-4e8e-9c85-9565de79c4c8',
+  keyword: 'ans_5f74eee8-3f82-411e-8faf-0e4b755771d2',
+  answer: '__capture_only_intended__',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'b5dea7e14bf0b8c946ae84784627b75f'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3FB48A70827BD213DD8C',
+    participant: undefined
+  },
+  messageTimestamp: 1741807057,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '0', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '0',
+  from: '573003725551'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3F2F899F322FBEFC8E7D',
+    participant: undefined
+  },
+  messageTimestamp: 1741807059,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '1', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '1',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_c8467a61-d969-4cca-98a8-32aabb9b04d8',
+  keyword: 'key_6bb58e51-e627-4aa5-86f9-e972d9aec9c4',
+  answer: '__call_action__',
+  options: {
+    media: null,
+    buttons: [],
+    capture: false,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'aac2084fa11a7d55273227f256f0ab0e'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_66879712-745f-4842-983f-7c803b4d1102',
+  keyword: 'ans_c8467a61-d969-4cca-98a8-32aabb9b04d8',
+  answer: '__capture_only_intended__',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: '7289d42267d37d80b71ea6841b95d613'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3FB59AB423D864677B27',
+    participant: undefined
+  },
+  messageTimestamp: 1741807063,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '22', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '22',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_3d6e3bf7-3694-4310-8f82-dd5ddb5d1ba3',
+  keyword: 'ans_66879712-745f-4842-983f-7c803b4d1102',
+  answer: '__capture_only_intended__',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'e0527b5fbae651086616763271479821'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3F3458B90FF1F82D4323',
+    participant: undefined
+  },
+  messageTimestamp: 1741807066,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: 'bvalen', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: 'bvalen',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_4f0741d8-1420-4fd1-9ee3-47e9efc1b05d',
+  keyword: 'ans_3d6e3bf7-3694-4310-8f82-dd5ddb5d1ba3',
+  answer: '__capture_only_intended__',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: '29543aca7fb9755b1eb5573fe7e37e24'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3F3A53F7F130F982E053',
+    participant: undefined
+  },
+  messageTimestamp: 1741807069,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '33', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '33',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_7e771919-f94e-497f-9e31-40110d51f42d',
+  keyword: 'ans_4f0741d8-1420-4fd1-9ee3-47e9efc1b05d',
+  answer: '__capture_only_intended__',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'b298d226fa46479d530225ee5d7b8abd'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3FB0BFCD95AAE90F3359',
+    participant: undefined
+  },
+  messageTimestamp: 1741807071,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '1', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '1',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_5f74eee8-3f82-411e-8faf-0e4b755771d2',
+  keyword: 'ans_7e771919-f94e-497f-9e31-40110d51f42d',
+  answer: '__capture_only_intended__',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'a893876991305da8686c6492720c7fb9'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3F075C5FADF06EDA57A0',
+    participant: undefined
+  },
+  messageTimestamp: 1741807073,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '1', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '1',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_8ddfd495-a8e9-4e8e-9c85-9565de79c4c8',
+  keyword: 'ans_5f74eee8-3f82-411e-8faf-0e4b755771d2',
+  answer: '__capture_only_intended__',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'b5dea7e14bf0b8c946ae84784627b75f'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3F2EE49003D9E99CCE8A',
+    participant: undefined
+  },
+  messageTimestamp: 1741807075,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '0', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '0',
+  from: '573003725551'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3FC8B52B45B49F3DD953',
+    participant: undefined
+  },
+  messageTimestamp: 1741807077,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '2', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '2',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_ab588735-62e5-4ab3-ba3a-05c4b708630d',
+  keyword: 'key_e8a2c02c-40cf-4d57-857f-1858c3670580',
+  answer: 'Por favor, escribe tu número de cédula para consultar tus citas:',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'a45ee921d46eca52896ce35cc8aa0f18'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3F8E0C3BB540031FD63D',
+    participant: undefined
+  },
+  messageTimestamp: 1741807095,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: 'aa', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: 'aa',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_866c7315-9a08-4d44-944f-b888e2ec4c58',
+  keyword: 'ans_ab588735-62e5-4ab3-ba3a-05c4b708630d',
+  answer: 'Si quiere volver al menú principal digite 0',
+  options: {
+    media: null,
+    buttons: [],
+    capture: false,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [ [Object], [Object] ],
+    keyword: {},
+    callback: false
+  },
+  refSerialize: '55a911a7ddd92c78d15365de151df917'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3FC54ECE4594989A74BD',
+    participant: undefined
+  },
+  messageTimestamp: 1741807100,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '0', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '0',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_928b43ab-87e0-4d22-9dc8-ec2f4147d09f',
+  keyword: 'key_c1f423ac-5fc0-46f5-b309-e7d57ce16de0',
+  answer: 'Volviendo al menú principal...',
+  options: {
+    media: null,
+    buttons: [],
+    capture: false,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: '425682117fb3fe5faeed961873f50b6a'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3F095AB8E3FBD75C3E31',
+    participant: undefined
+  },
+  messageTimestamp: 1741807108,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '2', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '2',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_ab588735-62e5-4ab3-ba3a-05c4b708630d',
+  keyword: 'key_e8a2c02c-40cf-4d57-857f-1858c3670580',
+  answer: 'Por favor, escribe tu número de cédula para consultar tus citas:',
+  options: {
+    media: null,
+    buttons: [],
+    capture: true,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: 'a45ee921d46eca52896ce35cc8aa0f18'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3FA1B5B03AD29BDCF3E5',
+    participant: undefined
+  },
+  messageTimestamp: 1741807109,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '11', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '11',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_866c7315-9a08-4d44-944f-b888e2ec4c58',
+  keyword: 'ans_ab588735-62e5-4ab3-ba3a-05c4b708630d',
+  answer: 'Si quiere volver al menú principal digite 0',
+  options: {
+    media: null,
+    buttons: [],
+    capture: false,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [ [Object], [Object] ],
+    keyword: {},
+    callback: false
+  },
+  refSerialize: '55a911a7ddd92c78d15365de151df917'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3F7169B7D56BE2A80743',
+    participant: undefined
+  },
+  messageTimestamp: 1741807112,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '0', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '0',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_928b43ab-87e0-4d22-9dc8-ec2f4147d09f',
+  keyword: 'key_c1f423ac-5fc0-46f5-b309-e7d57ce16de0',
+  answer: 'Volviendo al menú principal...',
+  options: {
+    media: null,
+    buttons: [],
+    capture: false,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: '425682117fb3fe5faeed961873f50b6a'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3F3083F406B2E1FF832E',
+    participant: undefined
+  },
+  messageTimestamp: 1741807114,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '3', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '3',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_ea0e9e60-5678-4ade-8360-3c15712cc99f',
+  keyword: 'key_375e7322-ba9e-4f7a-9ed5-d23e81100a93',
+  answer: '📍 Dirección: Calle 21 #26-08 Esquina clínica Fatima, San juan de Pasto.\n' +
+    '🕒 Horarios: Lunes a viernes, 15:00 PM – 18:00 PM.\n' +
+    '📞 Teléfono: 3161044386- 602 7212171',
+  options: {
+    media: null,
+    buttons: [],
+    capture: false,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: false
+  },
+  refSerialize: '2c94841bf210aba47cc93aec682f4ee1'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_cbf98ae2-8889-42cf-a3a0-87bab2adc720',
+  keyword: 'ans_ea0e9e60-5678-4ade-8360-3c15712cc99f',
+  answer: 'Si quiere volver al menú principal digite 0',
+  options: {
+    media: null,
+    buttons: [],
+    capture: false,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [ [Object], [Object] ],
+    keyword: {},
+    callback: false
+  },
+  refSerialize: '707fdf34efdd963d3730093c11696a88'
+}
+[handleMsg]:  {
+  key: {
+    remoteJid: '573003725551@s.whatsapp.net',
+    fromMe: false,
+    id: '3FB00640E17D3C0A9A1B',
+    participant: undefined
+  },
+  messageTimestamp: 1741807118,
+  pushName: 'Valentina Rosas',
+  broadcast: false,
+  message: Message {
+    extendedTextMessage: ExtendedTextMessage { text: '0', contextInfo: [ContextInfo] },
+    messageContextInfo: MessageContextInfo {
+      deviceListMetadata: [DeviceListMetadata],
+      deviceListMetadataVersion: 2
+    }
+  },
+  body: '0',
+  from: '573003725551'
+}
+[QUEUE_SE_ENVIO]:  {
+  ref: 'ans_928b43ab-87e0-4d22-9dc8-ec2f4147d09f',
+  keyword: 'key_c1f423ac-5fc0-46f5-b309-e7d57ce16de0',
+  answer: 'Volviendo al menú principal...',
+  options: {
+    media: null,
+    buttons: [],
+    capture: false,
+    child: null,
+    delay: 0,
+    idle: null,
+    ref: null,
+    nested: [],
+    keyword: {},
+    callback: true
+  },
+  refSerialize: '425682117fb3fe5faeed961873f50b6a'
+}
