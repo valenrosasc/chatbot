@@ -455,7 +455,7 @@ const flowInfoConsultorio = addKeyword(['3'])
     .addAnswer('Si quiere volver al menú principal digite 0', null, null, [flowVolverMenu]);
 
 // Menú principal
-const flowMenu = addKeyword(['hola', 'menu', 'inicio', 'buenas', 'buen', 'buenos', 'doctor','ola','cita','consultar','necesito','programar','quiero','solicitar','solicito','para','consulta','una','hello','hi','good','morning','evenging','nigth','afternoon','medico','doc','dr','señor','medicina'])
+const flowMenu = addKeyword(['hola', 'menu', 'inicio', 'buenas', 'buenos', 'doctor','cita','consultar','necesito','programar','quiero','solicitar','solicito','consulta','hello','good','morning','evenging','nigth','afternoon','medico','señor','medicina','iniciar', 'buen dia','ayuda','informacion'])
     .addAnswer(
         [
             'Consultorio doctor Juan Carlos Rosas',
