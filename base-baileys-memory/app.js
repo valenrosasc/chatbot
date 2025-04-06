@@ -316,104 +316,106 @@ const flowAgendarCita = addKeyword(['1'])
     });
 
 
-// Flujo para cancelar cita
+// Flujo para cancelar cita - VERSIÓN MODIFICADA
 const flowCancelarCita = addKeyword(['4'])
-    .addAnswer('Por favor, escribe tu número de cédula para cancelar tu cita:', { capture: true }, async (ctx, { flowDynamic, gotoFlow }) => {
-        const cedula = ctx.body.trim();
-        if (!/^\d+$/.test(cedula)) {
-            await flowDynamic('⚠️ La cédula debe contener solo números. Intenta nuevamente.');
-            return gotoFlow(flowCancelarCita);
-        }
-
-        // Buscar citas asociadas a la cédula
-        const citas = await leerCitasDesdeSQLite();
-        const citasUsuario = citas.filter((cita) => cita.cedula === cedula);
-
-        if (citasUsuario.length === 0) {
-            await flowDynamic('No tienes citas agendadas.');
-            return gotoFlow(flowMenu);
-        }
-
-        // Guardar las citas del usuario en userData
-        userData[ctx.from] = { ...userData[ctx.from], cedula, citas: citasUsuario };
-
-        // Mostrar las citas al usuario
-        let mensaje = 'Estas son tus citas agendadas:\n';
-        citasUsuario.forEach((cita, index) => {
-            mensaje += `${index + 1}. Fecha: ${cita.fecha}, Hora: ${cita.hora}\n`;
-        });
-
-        await flowDynamic(mensaje);
-    })
     .addAnswer(
-        'Por favor, selecciona la cita que deseas cancelar respondiendo con el número correspondiente:',
+        'Por favor, escribe tu número de cédula para cancelar tu cita:',
         { capture: true },
         async (ctx, { flowDynamic, gotoFlow }) => {
+            const cedula = ctx.body.trim(); // Aceptamos cualquier texto sin validar formato
+            
+            // Buscar citas asociadas a la cédula (sin validar formato)
+            const citas = await leerCitasDesdeSQLite();
+            const citasUsuario = citas.filter((cita) => cita.cedula === cedula);
+
+            if (citasUsuario.length === 0) {
+                await flowDynamic([
+                    '⚠️ No se encontraron citas registradas con esa cédula.',
+                    '\nPresiona *0* para volver al menú principal.'
+                ]);
+                return;
+            }
+
+            // Guardar las citas del usuario en userData
+            userData[ctx.from] = { ...userData[ctx.from], cedula, citas: citasUsuario };
+
+            // Mostrar las citas al usuario
+            let mensaje = '📅 Estas son tus citas agendadas:\n\n';
+            citasUsuario.forEach((cita, index) => {
+                mensaje += `${index + 1}. Fecha: ${cita.fecha}, Hora: ${cita.hora}\n`;
+            });
+            mensaje += '\nSelecciona la cita a cancelar (número) o presiona *0* para volver al menú.';
+            
+            await flowDynamic(mensaje);
+        }
+    )
+    .addAction(
+        { capture: true },
+        async (ctx, { flowDynamic, gotoFlow, fallBack }) => {
             const opcion = ctx.body.trim();
+            
+            // Opción para volver al menú
+            if (opcion === '0') {
+                await flowDynamic('Volviendo al menú principal...');
+                return gotoFlow(flowMenu);
+            }
+
             const indice = parseInt(opcion) - 1;
             const { cedula, citas } = userData[ctx.from] || {};
 
-            if (isNaN(indice) || indice < 0 || indice >= citas.length) {
-                await flowDynamic('⚠️ Opción inválida. Por favor, selecciona un número válido.');
-                return gotoFlow(flowCancelarCita);
+            // Validar selección
+            if (isNaN(indice) || indice < 0 || indice >= citas?.length) {
+                await flowDynamic([
+                    '⚠️ Opción inválida. Por favor selecciona un número de la lista:',
+                    '\nPresiona *0* para volver al menú principal.'
+                ]);
+                return fallBack();
             }
 
             const citaSeleccionada = citas[indice];
-            userData[ctx.from].citaSeleccionada = citaSeleccionada; // Guardar la cita seleccionada
+            userData[ctx.from].citaSeleccionada = citaSeleccionada;
 
-            await flowDynamic(`¿Estás seguro de que deseas cancelar la cita del ${citaSeleccionada.fecha} a las ${citaSeleccionada.hora}? Responde *SI* para confirmar o *NO* para volver al menú.`);
+            await flowDynamic([
+                `¿Confirmas que deseas cancelar la cita del ${citaSeleccionada.fecha} a las ${citaSeleccionada.hora}?`,
+                '\nResponde *SI* para confirmar o *NO* para volver al menú.'
+            ]);
         }
     )
-    .addAnswer(
-        'Por favor, responde *SI* para confirmar o *NO* para volver al menú.',
+    .addAction(
         { capture: true },
         async (ctx, { flowDynamic, gotoFlow }) => {
-            const respuesta = ctx.body ? ctx.body.trim().toLowerCase() : '';
+            const respuesta = ctx.body.trim().toLowerCase();
+            const { cedula, citaSeleccionada } = userData[ctx.from] || {};
 
             if (respuesta === 'si') {
-                const { cedula, citaSeleccionada } = userData[ctx.from] || {};
-
                 if (!cedula || !citaSeleccionada) {
-                    await flowDynamic('⚠️ No se encontró la cita a cancelar. Inténtalo de nuevo.');
-                    return gotoFlow(flowCancelarCita);
+                    await flowDynamic('⚠️ Error al procesar la cancelación. Intenta nuevamente.');
+                    return gotoFlow(flowMenu);
                 }
 
                 const resultado = await eliminarCitaEnSQLite(cedula, citaSeleccionada.fecha, citaSeleccionada.hora);
 
                 if (resultado) {
                     await flowDynamic([
-                        `✅ La cita del ${citaSeleccionada.fecha} a las ${citaSeleccionada.hora} ha sido cancelada.`,
+                        `✅ Cita del ${citaSeleccionada.fecha} a las ${citaSeleccionada.hora} cancelada.`,
+                        '\nPresiona *0* para volver al menú principal.'
                     ]);
-
-                    // Subir la base de datos actualizada a Dropbox
-                    const subidaExitosa = await subirBaseDeDatosADropbox();
-                    if (!subidaExitosa) {
-                        await flowDynamic('⚠️ Hubo un error al actualizar la base de datos en Dropbox.');
-                    }
-
-                    // Mensaje para volver al menú
-                    await flowDynamic('Si deseas realizar otra operación, presiona *0* para volver al menú principal.');
+                    
+                    await subirBaseDeDatosADropbox();
                 } else {
-                    await flowDynamic('⚠️ Hubo un error al cancelar la cita. Intenta nuevamente.');
+                    await flowDynamic('⚠️ Error al cancelar la cita. Intenta nuevamente.');
                 }
             } else if (respuesta === 'no') {
-                await flowDynamic('Volviendo al menú principal...');
-                return gotoFlow(flowMenu);
+                await flowDynamic('Operación cancelada. Volviendo al menú principal...');
             } else {
-                await flowDynamic('⚠️ Respuesta inválida. Por favor, responde *SI* o *NO*.');
-                return gotoFlow(flowCancelarCita);
+                await flowDynamic([
+                    '⚠️ Respuesta no reconocida.',
+                    '\nPresiona *0* para volver al menú principal.'
+                ]);
             }
 
-            userData[ctx.from] = {}; // Reiniciar los datos del usuario
-        }
-    )
-    .addAnswer(
-        'Si deseas realizar otra operación, presiona *0* para volver al menú principal.',
-        { capture: true },
-        async (ctx, { gotoFlow }) => {
-            if (ctx.body === '0') {
-                return gotoFlow(flowMenu); // Volver al menú principal si el usuario presiona 0
-            }
+            userData[ctx.from] = {}; // Limpiar datos temporales
+            return gotoFlow(flowMenu);
         }
     );
 
