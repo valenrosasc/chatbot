@@ -569,16 +569,15 @@ const main = async () => {
         });
     });
     
-    // Ruta principal (opcional, para verificar que el bot está vivo)
+    // Ruta principal (redirección a /qr)
     app.get('/', (req, res) => res.redirect('/qr'));
-    await QRPortalWeb({ server, basePath: '/qr' });
     
-    // Iniciar servidor Express
+    // Iniciar servidor Express PRIMERO
     const PORT = process.env.PORT || 3000;
     const server = app.listen(PORT, () => {
         console.log(`🚀 Servidor Express iniciado en puerto ${PORT}`);
     });
-    
+
     // Configuración de la sesión de WhatsApp
     const authDir = path.join(__dirname, '.wwebjs_auth');
     const authFile = path.join(authDir, 'auth_info_multi.json');
@@ -588,6 +587,12 @@ const main = async () => {
         if (!fs.existsSync(authDir)) {
             fs.mkdirSync(authDir, { recursive: true });
         }
+
+        // Eliminar sesión previa si existe para forzar nuevo QR
+        if (fs.existsSync(authFile)) {
+            fs.unlinkSync(authFile);
+            console.log('♻️ Sesión anterior eliminada para forzar nuevo QR');
+        }
         
         // Configuración del provider de Baileys
         const adapterProvider = createProvider(BaileysProvider, {
@@ -595,10 +600,17 @@ const main = async () => {
             restartOnAuthFail: true,
             connectTimeoutMs: 120_000,
             qrMaxRetries: 5,
-            browser: ['WhatsApp Bot', 'Chrome', '10.0'],
+            browser: ['Chrome (Linux)', '', ''], // Configuración más compatible
             logger: { level: 'warn' },
-            printQRInTerminal: true, // QR en la terminal por si acaso
+            printQRInTerminal: true,
             getMessage: async () => ({ conversation: '🤖 Bot de WhatsApp activo' })
+        });
+
+        // Evento para detectar generación del QR
+        adapterProvider.on('connection.update', (update) => {
+            if (update.qr) {
+                console.log('🔘 QR generado, disponible en /qr');
+            }
         });
 
         // Variables para controlar la conexión
@@ -615,9 +627,17 @@ const main = async () => {
                 const errorCode = update.lastDisconnect?.error?.output?.statusCode;
                 console.log(`⚠️ Desconexión detectada. Código: ${errorCode}`);
                 
+                // Limpiar sesión en errores de autenticación
+                if (errorCode === 401 || errorCode === 403) {
+                    if (fs.existsSync(authFile)) {
+                        fs.unlinkSync(authFile);
+                        console.log('🔑 Sesión eliminada (error de autenticación)');
+                    }
+                }
+                
                 if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
                     reconnectAttempts++;
-                    const delay = Math.min(5000 * reconnectAttempts, 30000); // Backoff progresivo
+                    const delay = Math.min(5000 * reconnectAttempts, 30000);
                     console.log(`⏳ Reconectando en ${delay / 1000} segundos...`);
                     setTimeout(() => main(), delay);
                 } else {
@@ -639,6 +659,7 @@ const main = async () => {
         // Keep-Alive para Render (cada 5 minutos)
         const keepAlive = setInterval(() => {
             axios.get(`http://localhost:${PORT}/health`)
+                .then(() => console.log('🫀 Keep-alive ejecutado'))
                 .catch(e => console.log('⚠️ Keep-alive fallido:', e.message));
         }, 300_000); // 5 minutos
 
@@ -652,13 +673,19 @@ const main = async () => {
 
         // Crear el bot
         await createBot({
-            flow: createFlow([flowMenu]), // Reemplaza `flowMenu` con tus flujos
+            flow: createFlow([flowMenu]), // Asegúrate de tener flowMenu definido
             provider: adapterProvider,
             database: new MockAdapter()
         });
 
         // Iniciar el portal QR en el MISMO puerto que Express
-        await QRPortalWeb({ server, verbose: false }); // ¡Clave para Render!
+        await QRPortalWeb({ 
+            server, 
+            basePath: '/qr',
+            verbose: true 
+        });
+
+        console.log('🔗 QR disponible en:', `https://tu-app.onrender.com/qr`);
 
     } catch (error) {
         console.error('💥 Error crítico:', error);
