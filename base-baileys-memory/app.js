@@ -565,6 +565,7 @@ const main = async () => {
     app.get('/health', (req, res) => {
         res.status(200).json({ 
             status: 'ok', 
+            timestamp: new Date().toISOString(),
             uptime: process.uptime() 
         });
     });
@@ -578,9 +579,13 @@ const main = async () => {
 
     try {
         // Limpieza de sesión previa (para forzar nuevo QR)
+        if (!fs.existsSync(authDir)) {
+            fs.mkdirSync(authDir, { recursive: true });
+        }
+        
         if (fs.existsSync(authFile)) {
             fs.unlinkSync(authFile);
-            console.log('♻️ Sesión anterior eliminada');
+            console.log('♻️ Sesión anterior eliminada para forzar nuevo QR');
         }
 
         // 3. Configuración del provider de Baileys
@@ -602,8 +607,8 @@ const main = async () => {
 
         adapterProvider.on('connection.update', (update) => {
             const status = update.connection;
-            console.log(`📶 Estado: ${status || 'actualizado'}`);
-
+            console.log(`📶 Estado de conexión: ${status || 'actualizado'}`);
+            
             // Detección de QR generado
             if (update.qr) {
                 console.log('🔘 QR generado, disponible en /qr');
@@ -612,14 +617,15 @@ const main = async () => {
             // Manejo de desconexiones
             if (status === 'close') {
                 const errorCode = update.lastDisconnect?.error?.output?.statusCode;
-                console.log(`⚠️ Desconexión (Código: ${errorCode})`);
-
+                console.log(`⚠️ Desconexión detectada. Código: ${errorCode}`);
+                
                 if (errorCode === 401 || errorCode === 403) {
                     if (fs.existsSync(authFile)) fs.unlinkSync(authFile);
                 }
-
+                
                 if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
-                    const delay = Math.min(5000 * ++reconnectAttempts, 30000);
+                    reconnectAttempts++;
+                    const delay = Math.min(5000 * reconnectAttempts, 30000);
                     console.log(`⏳ Reconectando en ${delay/1000}s...`);
                     setTimeout(main, delay);
                 } else {
@@ -631,7 +637,12 @@ const main = async () => {
             if (status === 'open') {
                 isConnected = true;
                 reconnectAttempts = 0;
-                console.log('✅ Conexión estable con WhatsApp');
+                console.log('✅ Conexión establecida con WhatsApp');
+                
+                // Sincronizar base de datos al conectar
+                subirBaseDeDatosADropbox().catch(e => 
+                    console.error('⚠️ Error en sincronización inicial:', e)
+                );
             }
         });
 
@@ -642,13 +653,14 @@ const main = async () => {
             database: new MockAdapter()
         });
 
-        // 6. Iniciar servidor integrado (Express + QR)
+        // 6. Iniciar servidor integrado
         const server = app.listen(PORT, () => {
-            console.log(`🚀 Servidor Express en puerto ${PORT}`);
+            console.log(`🚀 Servidor Express + QR iniciado en puerto ${PORT}`);
         });
 
+        // Configurar QRPortalWeb con el mismo servidor
         await QRPortalWeb({
-            server,  // Usa el mismo servidor Express
+            server,  // ¡Usa el mismo servidor Express!
             basePath: '/qr',
             verbose: true
         });
@@ -659,16 +671,26 @@ const main = async () => {
         // Keep-Alive para Render (cada 5 minutos)
         setInterval(() => {
             axios.get(`http://localhost:${PORT}/health`)
+                .then(() => console.log('🫀 Keep-alive ejecutado'))
                 .catch(e => console.log('⚠️ Keep-alive fallido:', e.message));
         }, 300_000);
 
         // Reconexión preventiva cada 5 días
         setInterval(() => {
             if (isConnected) {
-                console.log('🔄 Reconexión preventiva');
+                console.log('🔄 Reconexión preventiva (evitar cierre automático)');
                 adapterProvider.restart();
             }
         }, 5 * 24 * 60 * 60 * 1000);
+
+        // Backup periódico cada 6 horas
+        setInterval(() => {
+            if (isConnected) {
+                subirBaseDeDatosADropbox()
+                    .then(() => console.log('💾 Backup periódico completado'))
+                    .catch(e => console.error('⚠️ Error en backup:', e));
+            }
+        }, 6 * 60 * 60 * 1000);
 
     } catch (error) {
         console.error('💥 Error crítico:', error);
@@ -677,9 +699,16 @@ const main = async () => {
 };
 
 // Manejo de cierre limpio
-process.on('SIGINT', () => {
-    console.log('\n🔧 Cerrando...');
-    subirBaseDeDatosADropbox().finally(() => process.exit(0));
+process.on('SIGINT', async () => {
+    console.log('\n🔧 Cerrando limpiamente...');
+    try {
+        await subirBaseDeDatosADropbox();
+        console.log('💾 Datos guardados correctamente');
+    } catch (error) {
+        console.error('⚠️ Error al guardar datos:', error);
+    } finally {
+        process.exit(0);
+    }
 });
 
 // Iniciar el bot
