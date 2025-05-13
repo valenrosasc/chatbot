@@ -1,5 +1,64 @@
+// Paso 1: Añadir el require de Express al principio del archivo
 const path = require('path');
 const fs = require('fs');
+const express = require('express'); // Añadir esta línea
+
+// Paso 2: Añadir la configuración de logging (al principio del archivo)
+const setupLogger = () => {
+  const logDir = path.join(__dirname, 'logs');
+  
+  // Crear directorio de logs si no existe
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir, { recursive: true });
+  }
+  
+  // Función para escribir logs
+  const writeLog = (level, message) => {
+    const now = new Date();
+    const timestamp = now.toISOString();
+    const dateStr = now.toISOString().split('T')[0];
+    const logFile = path.join(logDir, `${dateStr}.log`);
+    
+    const logEntry = `[${timestamp}] [${level}] ${message}\n`;
+    
+    // Escribir en archivo
+    fs.appendFileSync(logFile, logEntry);
+  };
+  
+  // Sobreescribir métodos de console para registrar en archivo
+  const originalLog = console.log;
+  const originalError = console.error;
+  
+  console.log = function() {
+    const message = Array.from(arguments).map(arg => 
+      typeof arg === 'object' ? JSON.stringify(arg) : arg
+    ).join(' ');
+    writeLog('INFO', message);
+    originalLog.apply(console, arguments);
+  };
+  
+  console.error = function() {
+    const message = Array.from(arguments).map(arg => 
+      typeof arg === 'object' ? JSON.stringify(arg) : arg
+    ).join(' ');
+    writeLog('ERROR', message);
+    originalError.apply(console, arguments);
+  };
+  
+  // Capturar salidas no manejadas
+  process.on('uncaughtException', (err) => {
+    writeLog('ERROR', `Excepción no manejada: ${err.stack || err}`);
+  });
+  
+  process.on('unhandledRejection', (reason, promise) => {
+    writeLog('ERROR', `Promesa rechazada no manejada: ${reason}`);
+  });
+  
+  console.log('✅ Sistema de logs configurado');
+};
+
+// Inicializar el sistema de logs
+setupLogger();
 
 // Configuración de rutas (agregar después de los requires)
 const AUTH_DIR = path.join(__dirname, '.wwebjs_auth');
@@ -465,7 +524,7 @@ const flowInfoConsultorio = addKeyword(['3'])
 const flowMenu = addKeyword(['hola', 'menu', 'inicio', 'buenas', 'buenos', 'doctor','cita','consultar','necesito','programar','quiero','solicitar','solicito','consulta','hello','good','morning','evenging','nigth','afternoon','medico','señor','medicina','iniciar', 'buen dia','ayuda','informacion'])
     .addAnswer(
         [
-            'Consultorio doctor Juan Carlos Rosas',
+            'Consultorio doctor *Juan Carlos Rosas*',
             '🙌 ¡Bienvenido al sistema de citas! Estas son las opciones disponibles:',
             '(Seleccione el numero correspondientes de la opción a elegir)',
             '*1* - Agendar una cita.',
@@ -498,22 +557,46 @@ const flowMenu = addKeyword(['hola', 'menu', 'inicio', 'buenas', 'buenos', 'doct
 
 // Configuración del bot - Versión optimizada
 const main = async () => {
-    // 1. Configuración inicial
+    // Crear y configurar la aplicación Express
+    const app = express();
+    
+    // Ruta de health check para que los servicios externos mantengan viva la aplicación
+    app.get('/health', (req, res) => {
+      res.status(200).send({
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+      });
+    });
+    
+    app.get('/', (req, res) => {
+      res.send('Bot WhatsApp funcionando');
+    });
+    
+    // Iniciar servidor Express
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`🚀 Servidor Express iniciado en puerto ${PORT}`);
+    });
+    
+    // Resto de la configuración inicial
     const authDir = path.join(__dirname, '.wwebjs_auth');
     const authFile = path.join(authDir, 'auth_info_multi.json');
     
     try {
-        // 2. Limpieza y preparación
+        // Limpieza y preparación (mantén el código existente)
         if (!fs.existsSync(authDir)) {
             fs.mkdirSync(authDir, { recursive: true });
         }
         
+        // Mejor manejo de la sesión anterior
         if (fs.existsSync(authFile)) {
-            fs.unlinkSync(authFile);
-            console.log('♻️ Sesión anterior eliminada');
+            // En lugar de eliminar siempre, intenta primero recuperar la sesión
+            console.log('📱 Intentando recuperar sesión existente');
+            // Solo eliminaremos el archivo si hay un error de autenticación más adelante
         }
 
-        // 3. Sincronización inicial
+        // Sincronización de la base de datos (mantén el código existente)
         try {
             await descargarBaseDeDatosDesdeDropbox();
             console.log('✅ Base de datos sincronizada');
@@ -521,97 +604,149 @@ const main = async () => {
             console.error('⚠️ Error inicial al sincronizar DB:', error.message);
         }
 
-        // 4. Configuración del provider mejorada
+        // Configuración del provider mejorada
         const adapterProvider = createProvider(BaileysProvider, {
             authPath: authDir,
             restartOnAuthFail: true,
-            connectTimeoutMs: 60_000,
+            connectTimeoutMs: 120_000, // Aumentado a 2 minutos
+            qrMaxRetries: 5,
+            browser: ['WhatsApp Bot', 'Chrome', '10.0'],
             logger: { level: 'warn' },
             printQRInTerminal: true,
-            getMessage: async () => ({ conversation: 'Mensaje recibido' })
+            getMessage: async () => ({ conversation: '🤖 Bot de WhatsApp activo' })
         });
 
-        // 5. Manejo de conexión optimizado
+        // Sistema de reconexión mejorado
         let reconnectAttempts = 0;
-        const MAX_RECONNECT_ATTEMPTS = 5;
+        const MAX_RECONNECT_ATTEMPTS = 20; // Aumentado de 5 a 20
+        let isConnected = false;
 
         adapterProvider.on('connection.update', (update) => {
             const status = update.connection;
-            console.log(`📶 ${status === 'open' ? 'Conectado' : status === 'close' ? 'Desconectado' : 'Estado cambiado'}`);
+            console.log(`📶 Estado de conexión: ${status || 'actualizado'}`);
             
             if (status === 'close') {
                 const errorCode = update.lastDisconnect?.error?.output?.statusCode;
+                const errorMessage = update.lastDisconnect?.error?.message || 'Desconexión sin mensaje de error';
                 
-                if (errorCode === 401) {
-                    fs.existsSync(authFile) && fs.unlinkSync(authFile);
-                    console.log('🔄 Sesión reiniciada (Error 401)');
+                console.log(`⚠️ Desconexión detectada. Código: ${errorCode}, Mensaje: ${errorMessage}`);
+                
+                // Manejar diferentes tipos de errores
+                if (errorCode === 401 || errorCode === 403) {
+                    // Problemas de autenticación, limpiar sesión
+                    if (fs.existsSync(authFile)) {
+                        fs.unlinkSync(authFile);
+                        console.log('🔄 Sesión reiniciada (Error de autenticación)');
+                    }
                 }
 
                 if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
-                    const delay = Math.min(5000 * ++reconnectAttempts, 30000);
-                    console.log(`⏳ Reconectando en ${delay/1000}s...`);
-                    setTimeout(main, delay);
+                    // Estrategia de backoff exponencial con jitter
+                    const baseDelay = Math.min(5000 * Math.pow(1.5, reconnectAttempts), 60000);
+                    const jitter = Math.floor(Math.random() * 5000);
+                    const delay = baseDelay + jitter;
+                    
+                    reconnectAttempts++;
+                    console.log(`⏳ Reconectando (intento ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS}) en ${Math.round(delay/1000)}s...`);
+                    
+                    setTimeout(() => {
+                        if (!isConnected) {
+                            console.log('🔄 Reiniciando el bot...');
+                            main().catch(e => console.error('❌ Error al reiniciar:', e));
+                        }
+                    }, delay);
                 } else {
-                    console.error('❌ Máximo de intentos alcanzado');
-                    process.exit(1);
+                    console.error('❌ Máximo de intentos alcanzado. Esperando 5 minutos antes de reiniciar...');
+                    // Esperar 5 minutos y reiniciar desde cero
+                    setTimeout(() => {
+                        reconnectAttempts = 0;
+                        console.log('🔄 Reiniciando el proceso completo...');
+                        main().catch(e => console.error('❌ Error al reiniciar:', e));
+                    }, 300000);
                 }
             }
 
             if (status === 'open') {
+                isConnected = true;
                 reconnectAttempts = 0;
+                console.log('✅ Conexión establecida exitosamente');
+                
+                // Subir la base de datos como respaldo
                 subirBaseDeDatosADropbox()
+                    .then(() => console.log('💾 Backup realizado correctamente'))
                     .catch(e => console.error('⚠️ Error en backup automático:', e));
             }
         });
 
-        // 6. Creación del bot
+        // Sistema de keep-alive para evitar que Render apague el servicio
+        const keepAlive = setInterval(() => {
+            console.log(`🔄 Keep-alive ${new Date().toISOString()}`);
+            // Ping a nuestro propio endpoint de health check
+            axios.get(`http://localhost:${PORT}/health`)
+                .then(() => console.log('✅ Keep-alive exitoso'))
+                .catch(e => console.log('⚠️ Keep-alive fallido:', e.message));
+        }, 840000); // 14 minutos (menos que el límite de 15min de Render)
+
+        // Creación del bot (mantén el código existente)
         await createBot({
             flow: createFlow([flowMenu]),
             provider: adapterProvider,
             database: new MockAdapter()
         });
 
-        // 7. Inicio del servidor
-        const PORT = process.env.PORT || 3000;
-        console.log(`🚀 Servidor iniciado en puerto ${PORT}`);
-        await QRPortalWeb({ port: PORT, verbose: false });
+        // Iniciar el portal QR en otro puerto
+        await QRPortalWeb({ port: PORT + 1, verbose: false });
 
     } catch (error) {
         console.error('💥 Error crítico:', error);
-        setTimeout(main, 10000);
+        setTimeout(() => {
+            console.log('🔄 Reiniciando después de error crítico...');
+            main();
+        }, 10000);
     }
 };
 
-// Manejo de cierre mejorado
-const shutdownHandler = async () => {
-    console.log('\n🔧 Cerrando limpiamente...');
+// Paso 4: Actualizar el manejador de cierre
+const shutdownHandler = async (signal) => {
+    console.log(`\n🔧 Cerrando limpiamente (señal: ${signal})...`);
     try {
         await subirBaseDeDatosADropbox();
         console.log('💾 Datos guardados correctamente');
     } catch (error) {
         console.error('⚠️ Error al guardar datos:', error);
     } finally {
+        console.log('👋 Servicio finalizado');
         process.exit(0);
     }
 };
 
-// Captura de señales
-['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach(signal => {
-    process.on(signal, shutdownHandler);
+// Mejora: añadir más señales para capturar diferentes eventos de cierre
+['SIGINT', 'SIGTERM', 'SIGQUIT', 'SIGHUP'].forEach(signal => {
+    process.on(signal, () => shutdownHandler(signal));
 });
 
-// Manejo global de errores
+// Paso 5: Mantener el resto del código como está
+// Manejo global de errores, ya está mejorado con el sistema de logging
 process.on('unhandledRejection', (err) => {
     console.error('⚠️ Rechazo no manejado:', err);
+    // No salir, solo registrar
 });
 
 process.on('uncaughtException', (err) => {
     console.error('⚠️ Excepción no manejada:', err);
-    setTimeout(main, 5000);
+    // Reiniciar el proceso después de un breve retraso
+    setTimeout(() => {
+        console.log('🔄 Reiniciando después de excepción no manejada...');
+        main().catch(err => {
+            console.error('🔥 Error al reiniciar:', err);
+            process.exit(1);
+        });
+    }, 10000);
 });
 
 // Inicio controlado
 main().catch(err => {
     console.error('🔥 Error al iniciar:', err);
-    process.exit(1);
+    // Esperar un poco y reintentar
+    setTimeout(() => main(), 15000);
 });

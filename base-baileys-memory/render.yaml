@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: whatsapp-bot
+    env: node
+    buildCommand: npm install
+    startCommand: npm run prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DROPBOX_CLIENT_ID
+        sync: false
+      - key: DROPBOX_CLIENT_SECRET
+        sync: false
+      - key: DROPBOX_REFRESH_TOKEN
+        sync: false
+      - key: DROPBOX_ACCESS_TOKEN
+        sync: false
+      - key: GMAIL_USER
+        sync: false
+      - key: GMAIL_PASS
+        sync: false
+    healthCheckPath: /health
+    healthCheckTimeout: 10000
+    autoDeploy: true
