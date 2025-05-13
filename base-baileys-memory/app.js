@@ -570,9 +570,8 @@ const main = async () => {
     });
     
     // Ruta principal (opcional, para verificar que el bot está vivo)
-    app.get('/', (req, res) => {
-        res.send('🤖 Bot WhatsApp funcionando | Escanea el QR en /qr');
-    });
+    app.get('/', (req, res) => res.redirect('/qr'));
+    await QRPortalWeb({ server, basePath: '/qr' });
     
     // Iniciar servidor Express
     const PORT = process.env.PORT || 3000;
