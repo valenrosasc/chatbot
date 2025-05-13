@@ -555,7 +555,7 @@ const flowMenu = addKeyword(['hola', 'menu', 'inicio', 'buenas', 'buenos', 'doct
         }
       };    
 
-// Configuración del bot - Versión optimizada
+// Configuración del bot - Versión optimizada// Configuración del bot - Versión optimizada y corregida
 const main = async () => {
     // Crear y configurar la aplicación Express
     const app = express();
@@ -606,90 +606,47 @@ const main = async () => {
             getMessage: async () => ({ conversation: '🤖 Bot de WhatsApp activo' })
         });
 
-        // Evento para detectar generación del QR
+        // Evento para confirmar generación del QR
         adapterProvider.on('connection.update', (update) => {
             if (update.qr) {
-                console.log('🔘 QR generado, disponible en /qr');
+                console.log('🔘 QR generado correctamente');
+                console.log(`🔗 Accesible en: https://${process.env.RENDER_EXTERNAL_URL || 'localhost:'+PORT}/qr`);
             }
         });
 
         // Variables para controlar la conexión
         let isConnected = false;
-        let reconnectAttempts = 0;
-        const MAX_RECONNECT_ATTEMPTS = 10;
 
-        // Manejo de eventos de conexión
-        adapterProvider.on('connection.update', (update) => {
-            const status = update.connection;
-            console.log(`📶 Estado de conexión: ${status || 'actualizado'}`);
-            
-            if (status === 'close') {
-                const errorCode = update.lastDisconnect?.error?.output?.statusCode;
-                console.log(`⚠️ Desconexión detectada. Código: ${errorCode}`);
-                
-                // Limpiar sesión en errores de autenticación
-                if (errorCode === 401 || errorCode === 403) {
-                    if (fs.existsSync(authFile)) {
-                        fs.unlinkSync(authFile);
-                        console.log('🔑 Sesión eliminada (error de autenticación)');
-                    }
-                }
-                
-                if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
-                    reconnectAttempts++;
-                    const delay = Math.min(5000 * reconnectAttempts, 30000);
-                    console.log(`⏳ Reconectando en ${delay / 1000} segundos...`);
-                    setTimeout(() => main(), delay);
-                } else {
-                    console.log('🔴 Máximo de intentos alcanzado. Reiniciando...');
-                    setTimeout(() => {
-                        reconnectAttempts = 0;
-                        main();
-                    }, 60000);
-                }
-            }
-
-            if (status === 'open') {
-                isConnected = true;
-                reconnectAttempts = 0;
-                console.log('✅ Conexión establecida con WhatsApp');
-            }
-        });
-
-        // Keep-Alive para Render (cada 5 minutos)
-        const keepAlive = setInterval(() => {
-            axios.get(`http://localhost:${PORT}/health`)
-                .then(() => console.log('🫀 Keep-alive ejecutado'))
-                .catch(e => console.log('⚠️ Keep-alive fallido:', e.message));
-        }, 300_000); // 5 minutos
-
-        // Reconexión preventiva cada 5 días (evita el cierre de WhatsApp)
-        setInterval(() => {
-            if (isConnected) {
-                console.log('🔄 Reconexión preventiva (evitar cierre automático)');
-                adapterProvider.restart();
-            }
-        }, 5 * 24 * 60 * 60 * 1000); // 5 días
-
-        // Crear el bot
+        // Crear el bot PRIMERO
         await createBot({
-            flow: createFlow([flowMenu]), // Asegúrate de tener flowMenu definido
+            flow: createFlow([flowMenu]),
             provider: adapterProvider,
             database: new MockAdapter()
         });
 
-        // Iniciar el portal QR en el MISMO puerto que Express
+        // SOLO DESPUÉS de createBot, iniciar el portal QR
         await QRPortalWeb({ 
             server, 
             basePath: '/qr',
-            verbose: true 
+            verbose: true,
+            customHTML: `
+                <div style="text-align: center; padding: 20px;">
+                    <h1>Escanee este QR</h1>
+                    <p>Para vincular WhatsApp con el bot</p>
+                </div>
+            `
         });
 
-        console.log('🔗 QR disponible en:', `https://tu-app.onrender.com/qr`);
+        // Keep-Alive para Render
+        setInterval(() => {
+            axios.get(`http://localhost:${PORT}/health`)
+                .then(() => console.log('❤️ Keep-alive ejecutado'))
+                .catch(e => console.log('⚠️ Keep-alive fallido:', e.message));
+        }, 300_000); // 5 minutos
 
     } catch (error) {
         console.error('💥 Error crítico:', error);
-        setTimeout(() => main(), 10000); // Reinicio automático
+        setTimeout(() => main(), 10000);
     }
 };
 
