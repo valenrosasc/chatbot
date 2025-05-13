@@ -570,15 +570,12 @@ const main = async () => {
         });
     });
 
-    // Redirección de la ruta raíz a /qr
-    app.get('/', (req, res) => res.redirect('/qr'));
-
     // 2. Configuración de la sesión de WhatsApp
     const authDir = path.join(__dirname, '.wwebjs_auth');
     const authFile = path.join(authDir, 'auth_info_multi.json');
 
     try {
-        // Limpieza de sesión previa (para forzar nuevo QR)
+        // Limpieza de sesión previa
         if (!fs.existsSync(authDir)) {
             fs.mkdirSync(authDir, { recursive: true });
         }
@@ -607,25 +604,24 @@ const main = async () => {
 
         adapterProvider.on('connection.update', (update) => {
             const status = update.connection;
-            console.log(`📶 Estado de conexión: ${status || 'actualizado'}`);
+            console.log(`📶 Estado: ${status || 'actualizado'}`);
             
-            // Detección de QR generado
             if (update.qr) {
                 console.log('🔘 QR generado, disponible en /qr');
+                // Guardar QR en variable accesible
+                global.qrCode = update.qr;
             }
 
-            // Manejo de desconexiones
             if (status === 'close') {
                 const errorCode = update.lastDisconnect?.error?.output?.statusCode;
-                console.log(`⚠️ Desconexión detectada. Código: ${errorCode}`);
-                
+                console.log(`⚠️ Desconexión (Código: ${errorCode})`);
+
                 if (errorCode === 401 || errorCode === 403) {
                     if (fs.existsSync(authFile)) fs.unlinkSync(authFile);
                 }
-                
+
                 if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
-                    reconnectAttempts++;
-                    const delay = Math.min(5000 * reconnectAttempts, 30000);
+                    const delay = Math.min(5000 * ++reconnectAttempts, 30000);
                     console.log(`⏳ Reconectando en ${delay/1000}s...`);
                     setTimeout(main, delay);
                 } else {
@@ -637,57 +633,60 @@ const main = async () => {
             if (status === 'open') {
                 isConnected = true;
                 reconnectAttempts = 0;
-                console.log('✅ Conexión establecida con WhatsApp');
-                
-                // Sincronizar base de datos al conectar
+                console.log('✅ Conexión estable con WhatsApp');
                 subirBaseDeDatosADropbox().catch(e => 
                     console.error('⚠️ Error en sincronización inicial:', e)
                 );
             }
         });
 
-        // 5. Crear el bot
+        // 5. Ruta para mostrar el QR
+        app.get('/qr', (req, res) => {
+            if (global.qrCode) {
+                const qrImage = `
+                <html>
+                    <body>
+                        <h1>Escanee este código QR</h1>
+                        <img src="${global.qrCode}" alt="WhatsApp QR Code" style="width:300px"/>
+                        <p>Disponible por 60 segundos</p>
+                    </body>
+                </html>`;
+                res.send(qrImage);
+            } else {
+                res.status(404).send('QR no disponible. Espere a que se genere...');
+            }
+        });
+
+        // 6. Crear el bot
         await createBot({
             flow: createFlow([flowMenu]),
             provider: adapterProvider,
             database: new MockAdapter()
         });
 
-        // 6. Iniciar servidor integrado
+        // 7. Iniciar servidor
         const server = app.listen(PORT, () => {
-            console.log(`🚀 Servidor Express + QR iniciado en puerto ${PORT}`);
+            console.log(`🚀 Servidor listo en puerto ${PORT}`);
+            console.log(`🔗 Health Check: http://localhost:${PORT}/health`);
+            console.log(`🔗 QR Endpoint: http://localhost:${PORT}/qr`);
         });
 
-        // Configurar QRPortalWeb con el mismo servidor
-        await QRPortalWeb({
-            server,  // ¡Usa el mismo servidor Express!
-            basePath: '/qr',
-            verbose: true
-        });
-
-        console.log(`🔗 QR disponible en: https://tu-app.onrender.com/qr`);
-
-        // 7. Funciones de mantenimiento
-        // Keep-Alive para Render (cada 5 minutos)
+        // 8. Mantenimiento
         setInterval(() => {
             axios.get(`http://localhost:${PORT}/health`)
-                .then(() => console.log('🫀 Keep-alive ejecutado'))
                 .catch(e => console.log('⚠️ Keep-alive fallido:', e.message));
         }, 300_000);
 
-        // Reconexión preventiva cada 5 días
         setInterval(() => {
             if (isConnected) {
-                console.log('🔄 Reconexión preventiva (evitar cierre automático)');
+                console.log('🔄 Reconexión preventiva');
                 adapterProvider.restart();
             }
         }, 5 * 24 * 60 * 60 * 1000);
 
-        // Backup periódico cada 6 horas
         setInterval(() => {
             if (isConnected) {
                 subirBaseDeDatosADropbox()
-                    .then(() => console.log('💾 Backup periódico completado'))
                     .catch(e => console.error('⚠️ Error en backup:', e));
             }
         }, 6 * 60 * 60 * 1000);
@@ -698,20 +697,20 @@ const main = async () => {
     }
 };
 
-// Manejo de cierre limpio
+// Manejo de cierre
 process.on('SIGINT', async () => {
-    console.log('\n🔧 Cerrando limpiamente...');
+    console.log('\n🔧 Cerrando...');
     try {
         await subirBaseDeDatosADropbox();
-        console.log('💾 Datos guardados correctamente');
+        console.log('💾 Datos guardados');
     } catch (error) {
-        console.error('⚠️ Error al guardar datos:', error);
+        console.error('⚠️ Error al guardar:', error);
     } finally {
         process.exit(0);
     }
 });
 
-// Iniciar el bot
+// Iniciar
 main().catch(err => {
     console.error('🔥 Error al iniciar:', err);
     setTimeout(main, 15000);
