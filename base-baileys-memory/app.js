@@ -578,7 +578,10 @@ const main = async () => {
 
     try {
         // Limpieza de sesión previa (para forzar nuevo QR)
-        cleanAuthSession();
+        if (fs.existsSync(authFile)) {
+            fs.unlinkSync(authFile);
+            console.log('♻️ Sesión anterior eliminada');
+        }
 
         // 3. Configuración del provider de Baileys
         const adapterProvider = createProvider(BaileysProvider, {
@@ -612,7 +615,7 @@ const main = async () => {
                 console.log(`⚠️ Desconexión (Código: ${errorCode})`);
 
                 if (errorCode === 401 || errorCode === 403) {
-                    cleanAuthSession();
+                    if (fs.existsSync(authFile)) fs.unlinkSync(authFile);
                 }
 
                 if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
@@ -670,28 +673,6 @@ const main = async () => {
     } catch (error) {
         console.error('💥 Error crítico:', error);
         setTimeout(main, 10000);
-    }
-};
-
-// Función para limpiar sesión
-const cleanAuthSession = () => {
-    try {
-        const authDir = path.join(__dirname, '.wwebjs_auth');
-        const authFile = path.join(authDir, 'auth_info_multi.json');
-
-        if (!fs.existsSync(authDir)) {
-            fs.mkdirSync(authDir, { recursive: true });
-        }
-
-        if (fs.existsSync(authFile)) {
-            fs.unlinkSync(authFile);
-            console.log('♻️ Sesión anterior eliminada');
-            return true;
-        }
-        return false;
-    } catch (error) {
-        console.error('⚠️ Error al limpiar sesión:', error);
-        return false;
     }
 };
 
