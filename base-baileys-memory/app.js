@@ -695,7 +695,7 @@ const main = async () => {
         });
 
         // Iniciar el portal QR en otro puerto
-        await QRPortalWeb({ port: PORT + 1, verbose: false });
+        await QRPortalWeb({ port: 3333, verbose: false });
 
     } catch (error) {
         console.error('💥 Error crítico:', error);
