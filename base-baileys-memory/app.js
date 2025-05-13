@@ -555,113 +555,154 @@ const flowMenu = addKeyword(['hola', 'menu', 'inicio', 'buenas', 'buenos', 'doct
         }
       };    
 
-// Configuración del bot - Versión optimizada// Configuración del bot - Versión optimizada y corregida
+// Configuración del bot - Versión optimizada
 const main = async () => {
-    // Crear y configurar la aplicación Express
+    // 1. Configura Express
     const app = express();
-    
-    // Ruta de health check para Render
+    const PORT = process.env.PORT || 3000;
+
+    // Health Check para Render
     app.get('/health', (req, res) => {
-        res.status(200).send({
-            status: 'ok',
-            timestamp: new Date().toISOString(),
-            uptime: process.uptime()
+        res.status(200).json({ 
+            status: 'ok', 
+            uptime: process.uptime() 
         });
     });
-    
-    // Ruta principal (redirección a /qr)
-    app.get('/', (req, res) => res.redirect('/qr'));
-    
-    // Iniciar servidor Express PRIMERO
-    const PORT = process.env.PORT || 3000;
-    const server = app.listen(PORT, () => {
-        console.log(`🚀 Servidor Express iniciado en puerto ${PORT}`);
-    });
 
-    // Configuración de la sesión de WhatsApp
+    // Redirección de la ruta raíz a /qr
+    app.get('/', (req, res) => res.redirect('/qr'));
+
+    // 2. Configuración de la sesión de WhatsApp
     const authDir = path.join(__dirname, '.wwebjs_auth');
     const authFile = path.join(authDir, 'auth_info_multi.json');
-    
-    try {
-        // Limpieza y preparación de la sesión
-        if (!fs.existsSync(authDir)) {
-            fs.mkdirSync(authDir, { recursive: true });
-        }
 
-        // Eliminar sesión previa si existe para forzar nuevo QR
-        if (fs.existsSync(authFile)) {
-            fs.unlinkSync(authFile);
-            console.log('♻️ Sesión anterior eliminada para forzar nuevo QR');
-        }
-        
-        // Configuración del provider de Baileys
+    try {
+        // Limpieza de sesión previa (para forzar nuevo QR)
+        cleanAuthSession();
+
+        // 3. Configuración del provider de Baileys
         const adapterProvider = createProvider(BaileysProvider, {
             authPath: authDir,
             restartOnAuthFail: true,
             connectTimeoutMs: 120_000,
             qrMaxRetries: 5,
-            browser: ['Chrome (Linux)', '', ''], // Configuración más compatible
+            browser: ['Chrome (Linux)', '', ''],
             logger: { level: 'warn' },
             printQRInTerminal: true,
             getMessage: async () => ({ conversation: '🤖 Bot de WhatsApp activo' })
         });
 
-        // Evento para confirmar generación del QR
+        // 4. Manejo de conexión optimizado
+        let isConnected = false;
+        let reconnectAttempts = 0;
+        const MAX_RECONNECT_ATTEMPTS = 5;
+
         adapterProvider.on('connection.update', (update) => {
+            const status = update.connection;
+            console.log(`📶 Estado: ${status || 'actualizado'}`);
+
+            // Detección de QR generado
             if (update.qr) {
-                console.log('🔘 QR generado correctamente');
-                console.log(`🔗 Accesible en: https://${process.env.RENDER_EXTERNAL_URL || 'localhost:'+PORT}/qr`);
+                console.log('🔘 QR generado, disponible en /qr');
+            }
+
+            // Manejo de desconexiones
+            if (status === 'close') {
+                const errorCode = update.lastDisconnect?.error?.output?.statusCode;
+                console.log(`⚠️ Desconexión (Código: ${errorCode})`);
+
+                if (errorCode === 401 || errorCode === 403) {
+                    cleanAuthSession();
+                }
+
+                if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                    const delay = Math.min(5000 * ++reconnectAttempts, 30000);
+                    console.log(`⏳ Reconectando en ${delay/1000}s...`);
+                    setTimeout(main, delay);
+                } else {
+                    console.log('🔴 Máximo de intentos alcanzado');
+                    process.exit(1);
+                }
+            }
+
+            if (status === 'open') {
+                isConnected = true;
+                reconnectAttempts = 0;
+                console.log('✅ Conexión estable con WhatsApp');
             }
         });
 
-        // Variables para controlar la conexión
-        let isConnected = false;
-
-        // Crear el bot PRIMERO
+        // 5. Crear el bot
         await createBot({
             flow: createFlow([flowMenu]),
             provider: adapterProvider,
             database: new MockAdapter()
         });
 
-        // SOLO DESPUÉS de createBot, iniciar el portal QR
-        await QRPortalWeb({ 
-            server, 
-            basePath: '/qr',
-            verbose: true,
-            customHTML: `
-                <div style="text-align: center; padding: 20px;">
-                    <h1>Escanee este QR</h1>
-                    <p>Para vincular WhatsApp con el bot</p>
-                </div>
-            `
+        // 6. Iniciar servidor integrado (Express + QR)
+        const server = app.listen(PORT, () => {
+            console.log(`🚀 Servidor Express en puerto ${PORT}`);
         });
 
-        // Keep-Alive para Render
+        await QRPortalWeb({
+            server,  // Usa el mismo servidor Express
+            basePath: '/qr',
+            verbose: true
+        });
+
+        console.log(`🔗 QR disponible en: https://tu-app.onrender.com/qr`);
+
+        // 7. Funciones de mantenimiento
+        // Keep-Alive para Render (cada 5 minutos)
         setInterval(() => {
             axios.get(`http://localhost:${PORT}/health`)
-                .then(() => console.log('❤️ Keep-alive ejecutado'))
                 .catch(e => console.log('⚠️ Keep-alive fallido:', e.message));
-        }, 300_000); // 5 minutos
+        }, 300_000);
+
+        // Reconexión preventiva cada 5 días
+        setInterval(() => {
+            if (isConnected) {
+                console.log('🔄 Reconexión preventiva');
+                adapterProvider.restart();
+            }
+        }, 5 * 24 * 60 * 60 * 1000);
 
     } catch (error) {
         console.error('💥 Error crítico:', error);
-        setTimeout(() => main(), 10000);
+        setTimeout(main, 10000);
+    }
+};
+
+// Función para limpiar sesión
+const cleanAuthSession = () => {
+    try {
+        const authDir = path.join(__dirname, '.wwebjs_auth');
+        const authFile = path.join(authDir, 'auth_info_multi.json');
+
+        if (!fs.existsSync(authDir)) {
+            fs.mkdirSync(authDir, { recursive: true });
+        }
+
+        if (fs.existsSync(authFile)) {
+            fs.unlinkSync(authFile);
+            console.log('♻️ Sesión anterior eliminada');
+            return true;
+        }
+        return false;
+    } catch (error) {
+        console.error('⚠️ Error al limpiar sesión:', error);
+        return false;
     }
 };
 
 // Manejo de cierre limpio
-const shutdownHandler = async (signal) => {
-    console.log(`\n🔧 Cerrando (señal: ${signal})...`);
-    process.exit(0);
-};
-
-['SIGINT', 'SIGTERM'].forEach(signal => {
-    process.on(signal, shutdownHandler);
+process.on('SIGINT', () => {
+    console.log('\n🔧 Cerrando...');
+    subirBaseDeDatosADropbox().finally(() => process.exit(0));
 });
 
 // Iniciar el bot
 main().catch(err => {
     console.error('🔥 Error al iniciar:', err);
-    setTimeout(() => main(), 15000);
+    setTimeout(main, 15000);
 });
