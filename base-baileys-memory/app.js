@@ -1,65 +1,3 @@
-// Paso 1: Añadir el require de Express al principio del archivo
-const path = require('path');
-const fs = require('fs');
-const express = require('express'); // Añadir esta línea
-
-// Paso 2: Añadir la configuración de logging (al principio del archivo)
-const setupLogger = () => {
-  const logDir = path.join(__dirname, 'logs');
-  
-  // Crear directorio de logs si no existe
-  if (!fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir, { recursive: true });
-  }
-  
-  // Función para escribir logs
-  const writeLog = (level, message) => {
-    const now = new Date();
-    const timestamp = now.toISOString();
-    const dateStr = now.toISOString().split('T')[0];
-    const logFile = path.join(logDir, `${dateStr}.log`);
-    
-    const logEntry = `[${timestamp}] [${level}] ${message}\n`;
-    
-    // Escribir en archivo
-    fs.appendFileSync(logFile, logEntry);
-  };
-  
-  // Sobreescribir métodos de console para registrar en archivo
-  const originalLog = console.log;
-  const originalError = console.error;
-  
-  console.log = function() {
-    const message = Array.from(arguments).map(arg => 
-      typeof arg === 'object' ? JSON.stringify(arg) : arg
-    ).join(' ');
-    writeLog('INFO', message);
-    originalLog.apply(console, arguments);
-  };
-  
-  console.error = function() {
-    const message = Array.from(arguments).map(arg => 
-      typeof arg === 'object' ? JSON.stringify(arg) : arg
-    ).join(' ');
-    writeLog('ERROR', message);
-    originalError.apply(console, arguments);
-  };
-  
-  // Capturar salidas no manejadas
-  process.on('uncaughtException', (err) => {
-    writeLog('ERROR', `Excepción no manejada: ${err.stack || err}`);
-  });
-  
-  process.on('unhandledRejection', (reason, promise) => {
-    writeLog('ERROR', `Promesa rechazada no manejada: ${reason}`);
-  });
-  
-  console.log('✅ Sistema de logs configurado');
-};
-
-// Inicializar el sistema de logs
-setupLogger();
-
 // Configuración de rutas (agregar después de los requires)
 const AUTH_DIR = path.join(__dirname, '.wwebjs_auth');
 const AUTH_FILE = path.join(AUTH_DIR, 'auth_info_multi.json');
@@ -524,7 +462,7 @@ const flowInfoConsultorio = addKeyword(['3'])
 const flowMenu = addKeyword(['hola', 'menu', 'inicio', 'buenas', 'buenos', 'doctor','cita','consultar','necesito','programar','quiero','solicitar','solicito','consulta','hello','good','morning','evenging','nigth','afternoon','medico','señor','medicina','iniciar', 'buen dia','ayuda','informacion'])
     .addAnswer(
         [
-            'Consultorio doctor *Juan Carlos Rosas*',
+            'Consultorio doctor *Juan Carlos Rosas',
             '🙌 ¡Bienvenido al sistema de citas! Estas son las opciones disponibles:',
             '(Seleccione el numero correspondientes de la opción a elegir)',
             '*1* - Agendar una cita.',
@@ -558,214 +496,119 @@ const flowMenu = addKeyword(['hola', 'menu', 'inicio', 'buenas', 'buenos', 'doct
 // Configuración del bot - Versión optimizada
 const main = async () => {
     // 1. Configuración inicial
-    const app = express();
-    const PORT = process.env.PORT || 3000;
-
-    // 2. Middlewares esenciales
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: true }));
-
-    // 3. Health Check (para evitar que Render duerma el bot)
-    app.get('/health', (req, res) => {
-        res.status(200).json({
-            status: 'online',
-            timestamp: new Date().toISOString(),
-            uptime: process.uptime()
-        });
-    });
-
-    // 4. Configuración de la sesión de WhatsApp
     const authDir = path.join(__dirname, '.wwebjs_auth');
     const authFile = path.join(authDir, 'auth_info_multi.json');
-
-    // Limpieza de sesión previa
-    if (!fs.existsSync(authDir)) fs.mkdirSync(authDir, { recursive: true });
-    if (fs.existsSync(authFile)) {
-        fs.unlinkSync(authFile);
-        console.log('♻️ Sesión anterior eliminada');
-    }
-
+    
     try {
-        // 5. Configuración del proveedor Baileys (simplificada y optimizada)
+        // 2. Limpieza y preparación
+        if (!fs.existsSync(authDir)) {
+            fs.mkdirSync(authDir, { recursive: true });
+        }
+        
+        if (fs.existsSync(authFile)) {
+            fs.unlinkSync(authFile);
+            console.log('♻️ Sesión anterior eliminada');
+        }
+
+        // 3. Sincronización inicial
+        try {
+            await descargarBaseDeDatosDesdeDropbox();
+            console.log('✅ Base de datos sincronizada');
+        } catch (error) {
+            console.error('⚠️ Error inicial al sincronizar DB:', error.message);
+        }
+
+        // 4. Configuración del provider mejorada
         const adapterProvider = createProvider(BaileysProvider, {
             authPath: authDir,
             restartOnAuthFail: true,
+            connectTimeoutMs: 60_000,
+            logger: { level: 'warn' },
             printQRInTerminal: true,
-            browser: ['Chrome (Linux)', '', ''],
-            logger: { level: 'silent' }, // Reduce logs innecesarios
-            connectTimeoutMs: 60000,
-            qrTimeoutMs: 45000 // 45 segundos para escanear
+            getMessage: async () => ({ conversation: 'Mensaje recibido' })
         });
 
-        // 6. Variables de estado
-        let currentQR = null;
-        let isConnected = false;
+        // 5. Manejo de conexión optimizado
+        let reconnectAttempts = 0;
+        const MAX_RECONNECT_ATTEMPTS = 5;
 
-        // 7. Manejador de eventos de conexión (mejorado)
         adapterProvider.on('connection.update', (update) => {
-            const { connection, qr, isNewLogin } = update;
+            const status = update.connection;
+            console.log(`📶 ${status === 'open' ? 'Conectado' : status === 'close' ? 'Desconectado' : 'Estado cambiado'}`);
+            
+            if (status === 'close') {
+                const errorCode = update.lastDisconnect?.error?.output?.statusCode;
+                
+                if (errorCode === 401) {
+                    fs.existsSync(authFile) && fs.unlinkSync(authFile);
+                    console.log('🔄 Sesión reiniciada (Error 401)');
+                }
 
-            // Manejo del QR
-            if (qr) {
-                currentQR = qr;
-                console.log('🔄 Nuevo código QR generado');
+                if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                    const delay = Math.min(5000 * ++reconnectAttempts, 30000);
+                    console.log(`⏳ Reconectando en ${delay/1000}s...`);
+                    setTimeout(main, delay);
+                } else {
+                    console.error('❌ Máximo de intentos alcanzado');
+                    process.exit(1);
+                }
             }
 
-            // Manejo de conexión
-            if (connection === 'open') {
-                isConnected = true;
-                console.log('✅ Conexión estable con WhatsApp');
-                subirBaseDeDatosADropbox().catch(e => 
-                    console.error('⚠️ Error en backup inicial:', e.message)
-                );
-            }
-
-            if (connection === 'close') {
-                isConnected = false;
-                console.log('⚠️ Conexión perdida');
+            if (status === 'open') {
+                reconnectAttempts = 0;
+                subirBaseDeDatosADropbox()
+                    .catch(e => console.error('⚠️ Error en backup automático:', e));
             }
         });
 
-        // 8. Ruta del QR (SOLUCIÓN DEFINITIVA)
-        app.get('/qr', (req, res) => {
-            if (!currentQR) {
-                return res.status(200).send(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Esperando QR</title>
-                    <meta charset="UTF-8">
-                    <meta http-equiv="refresh" content="10">
-                    <style>
-                        body { 
-                            font-family: Arial, sans-serif;
-                            text-align: center;
-                            padding: 40px;
-                            background-color: #f5f5f5;
-                        }
-                        .container {
-                            max-width: 500px;
-                            margin: 0 auto;
-                            background: white;
-                            padding: 30px;
-                            border-radius: 10px;
-                            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <h1>🔄 Generando código QR...</h1>
-                        <p>Por favor espera, esto puede tomar unos segundos</p>
-                        <p>La página se actualizará automáticamente</p>
-                    </div>
-                </body>
-                </html>
-                `);
-            }
-
-            res.send(`
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>QR para WhatsApp</title>
-                <meta charset="UTF-8">
-                <meta http-equiv="refresh" content="15">
-                <style>
-                    body { 
-                        font-family: Arial, sans-serif;
-                        text-align: center;
-                        padding: 40px;
-                        background-color: #f5f5f5;
-                    }
-                    .container {
-                        max-width: 500px;
-                        margin: 0 auto;
-                        background: white;
-                        padding: 30px;
-                        border-radius: 10px;
-                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                    }
-                    img.qr {
-                        width: 100%;
-                        max-width: 300px;
-                        margin: 20px auto;
-                        display: block;
-                        border: 1px solid #eee;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <h1>📱 Escanee este código QR</h1>
-                    <img src="${currentQR}" class="qr" alt="Código QR de WhatsApp">
-                    <p>Válido por 45 segundos | <a href="/qr">Actualizar manualmente</a></p>
-                    <p><small>La página se actualizará automáticamente</small></p>
-                </div>
-            </body>
-            </html>
-            `);
-        });
-
-        // 9. Redirección desde la raíz
-        app.get('/', (req, res) => res.redirect('/qr'));
-
-        // 10. Crear el bot
+        // 6. Creación del bot
         await createBot({
             flow: createFlow([flowMenu]),
             provider: adapterProvider,
             database: new MockAdapter()
         });
 
-        // 11. Iniciar servidor
-        const server = app.listen(PORT, () => {
-            console.log(`
-            ==========================================
-            🚀 Bot iniciado correctamente en puerto ${PORT}
-            🔗 Health Check: http://localhost:${PORT}/health
-            🔗 QR Code: http://localhost:${PORT}/qr
-            ==========================================
-            `);
-        });
-
-        // 12. Mantenimiento automático
-        // Keep-alive cada 4 minutos (para Render)
-        setInterval(() => {
-            axios.get(`http://localhost:${PORT}/health`)
-                .then(() => console.log('❤️ Keep-alive ejecutado'))
-                .catch(e => console.log('⚠️ Keep-alive fallido:', e.message));
-        }, 240000);
-
-        // Backup automático cada 12 horas
-        setInterval(() => {
-            if (isConnected) {
-                subirBaseDeDatosADropbox()
-                    .then(() => console.log('💾 Backup automático completado'))
-                    .catch(e => console.error('⚠️ Error en backup:', e));
-            }
-        }, 12 * 60 * 60 * 1000);
+        // 7. Inicio del servidor
+        const PORT = process.env.PORT || 3000;
+        console.log(`🚀 Servidor iniciado en puerto ${PORT}`);
+        await QRPortalWeb({ port: PORT, verbose: false });
 
     } catch (error) {
         console.error('💥 Error crítico:', error);
-        setTimeout(main, 10000); // Reinicio automático
+        setTimeout(main, 10000);
     }
 };
 
-// 13. Manejo de cierre limpio
-process.on('SIGINT', async () => {
-    console.log('\n🔧 Cerrando aplicación limpiamente...');
+// Manejo de cierre mejorado
+const shutdownHandler = async () => {
+    console.log('\n🔧 Cerrando limpiamente...');
     try {
         await subirBaseDeDatosADropbox();
-        console.log('💾 Todos los datos guardados correctamente');
+        console.log('💾 Datos guardados correctamente');
     } catch (error) {
         console.error('⚠️ Error al guardar datos:', error);
     } finally {
         process.exit(0);
     }
+};
+
+// Captura de señales
+['SIGINT', 'SIGTERM', 'SIGQUIT'].forEach(signal => {
+    process.on(signal, shutdownHandler);
 });
 
-// 14. Iniciar la aplicación con manejo de errores
+// Manejo global de errores
+process.on('unhandledRejection', (err) => {
+    console.error('⚠️ Rechazo no manejado:', err);
+});
+
+process.on('uncaughtException', (err) => {
+    console.error('⚠️ Excepción no manejada:', err);
+    setTimeout(main, 5000);
+});
+
+// Inicio controlado
 main().catch(err => {
-    console.error('🔥 Error durante el inicio:', err);
-    setTimeout(main, 15000); // Reintentar después de 15 segundos
+    console.error('🔥 Error al iniciar:', err);
+    process.exit(1);
 });
