@@ -1,3 +1,6 @@
+const path = require('path');
+const fs = require('fs');
+
 // Configuración de rutas (agregar después de los requires)
 const AUTH_DIR = path.join(__dirname, '.wwebjs_auth');
 const AUTH_FILE = path.join(AUTH_DIR, 'auth_info_multi.json');
