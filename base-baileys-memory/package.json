@@ -6,7 +6,7 @@
     "scripts": {
         "postinstall": "npm rebuild sqlite3 --build-from-source && npm rebuild sharp",
         "pre-copy": "cd .. && npm run copy.lib base-baileys-memory",
-        "start": "node app.js",
+        "start": "node webhook.js",
         "monitor": "node monitor.js",
         "prod": "concurrently \"npm run start\" \"npm run monitor\""
     },
