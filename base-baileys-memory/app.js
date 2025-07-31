@@ -615,3 +615,14 @@ main().catch(err => {
     console.error('🔥 Error al iniciar:', err);
     process.exit(1);
 });
+
+// Al final de app.js:
+module.exports = {
+    handleIncomingMessage: async (message) => {
+        // Tu lógica actual de respuesta (usa sendMessage del webhook)
+        if (message.body === 'hola') {
+            await sendMessage(message.from, '¡Hola! Soy tu bot.');
+        }
+        // ... (flujos existentes)
+    }
+};
