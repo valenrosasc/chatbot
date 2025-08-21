@@ -274,6 +274,9 @@ const enviarMensajeWhatsApp = async (numero, mensaje) => {
 };
 
 // Función para manejar el flujo de agendar cita
+// ... código anterior sin cambios ...
+
+// Función para manejar el flujo de agendar cita
 const manejarAgendarCita = async (numero, mensaje) => {
     if (!userData[numero]) {
         userData[numero] = { paso: 'solicitar_cedula' };
@@ -333,11 +336,11 @@ const manejarAgendarCita = async (numero, mensaje) => {
             }
             
             const indiceFecha = parseInt(mensaje) - 1;
-            const { fechasDisponibles } = datosUsuario;
+            const fechasDisponiblesArray = datosUsuario.fechasDisponibles; // Cambiado el nombre aquí
             
-            if (isNaN(indiceFecha) || indiceFecha < 0 || indiceFecha >= fechasDisponibles.length) {
+            if (isNaN(indiceFecha) || indiceFecha < 0 || indiceFecha >= fechasDisponiblesArray.length) {
                 let mensajeError = '⚠️ Opción inválida. Por favor, selecciona una fecha disponible respondiendo con el número:\n';
-                fechasDisponibles.forEach((fecha, index) => {
+                fechasDisponiblesArray.forEach((fecha, index) => {
                     mensajeError += `${index + 1}. ${fecha}\n`;
                 });
                 mensajeError += '\nResponde con 0 para volver al menú principal.';
@@ -346,7 +349,7 @@ const manejarAgendarCita = async (numero, mensaje) => {
                 return;
             }
             
-            datosUsuario.fecha = fechasDisponibles[indiceFecha];
+            datosUsuario.fecha = fechasDisponiblesArray[indiceFecha];
             datosUsuario.paso = 'seleccionar_hora';
             
             let mensajeHorarios = `Fecha seleccionada: ${datosUsuario.fecha}\n`;
@@ -391,6 +394,8 @@ const manejarAgendarCita = async (numero, mensaje) => {
     }
 };
 
+// ... el resto del código permanece igual ...
+
 // Función para manejar el flujo de cancelar cita
 const manejarCancelarCita = async (numero, mensaje) => {
     if (!userData[numero] || !userData[numero].cancelarPaso) {
@@ -403,9 +408,9 @@ const manejarCancelarCita = async (numero, mensaje) => {
 
     switch (datosUsuario.cancelarPaso) {
         case 'solicitar_cedula':
-            const cedula = mensaje.trim();
-            const citas = await leerCitasDesdeSQLite();
-            const citasUsuario = citas.filter((cita) => cita.cedula === cedula);
+            const cedulaIngresada = mensaje.trim(); // Cambiado el nombre
+            const todasLasCitas = await leerCitasDesdeSQLite(); // Cambiado el nombre
+            const citasUsuario = todasLasCitas.filter((cita) => cita.cedula === cedulaIngresada);
 
             if (citasUsuario.length === 0) {
                 await enviarMensajeWhatsApp(numero, '⚠️ No se encontraron citas registradas con esa cédula.');
@@ -414,7 +419,7 @@ const manejarCancelarCita = async (numero, mensaje) => {
                 return;
             }
 
-            datosUsuario.cedula = cedula;
+            datosUsuario.cedula = cedulaIngresada;
             datosUsuario.citas = citasUsuario;
             datosUsuario.cancelarPaso = 'seleccionar_cita';
 
@@ -435,7 +440,7 @@ const manejarCancelarCita = async (numero, mensaje) => {
             }
 
             const indice = parseInt(mensaje) - 1;
-            const { citas } = datosUsuario;
+            const { citas } = datosUsuario; // Esta variable está bien porque está dentro de su propio case
 
             if (isNaN(indice) || indice < 0 || indice >= citas.length) {
                 await enviarMensajeWhatsApp(numero, '⚠️ Opción inválida. Por favor selecciona un número de la lista:');
@@ -453,10 +458,11 @@ const manejarCancelarCita = async (numero, mensaje) => {
 
         case 'confirmar_cancelacion':
             const respuesta = mensaje.trim().toLowerCase();
-            const { cedula, citaSeleccionada } = datosUsuario;
+            // Aquí usamos datosUsuario.cedula en lugar de redeclarar cedula
+            const { citaSeleccionada } = datosUsuario;
 
             if (respuesta === 'si') {
-                const resultado = await eliminarCitaEnSQLite(cedula, citaSeleccionada.fecha, citaSeleccionada.hora);
+                const resultado = await eliminarCitaEnSQLite(datosUsuario.cedula, citaSeleccionada.fecha, citaSeleccionada.hora);
 
                 if (resultado) {
                     await enviarMensajeWhatsApp(
