@@ -617,12 +617,62 @@ main().catch(err => {
 });
 
 // Al final de app.js:
+const { sendMessage } = require('./webhook');
+
 module.exports = {
     handleIncomingMessage: async (message) => {
-        // Tu lógica actual de respuesta (usa sendMessage del webhook)
-        if (message.body === 'hola') {
-            await sendMessage(message.from, '¡Hola! Soy tu bot.');
+        const text = message.body.trim().toLowerCase();
+        const from = message.from;
+
+        // Menú principal
+        if (['hola', 'menu', 'inicio', 'ayuda'].includes(text)) {
+            await sendMessage(from,
+                'Consultorio doctor *Juan Carlos Rosas*\n🙌 ¡Bienvenido al sistema de citas! Estas son las opciones disponibles:\n' +
+                '(Seleccione el número correspondiente de la opción a elegir)\n' +
+                '*1* - Agendar una cita.\n' +
+                '*2* - Consultar mis citas.\n' +
+                '*3* - Información del consultorio.\n' +
+                '*4* - Cancelar una cita.'
+            );
+            return;
         }
-        // ... (flujos existentes)
+
+        // Información del consultorio
+        if (text === '3') {
+            await sendMessage(from,
+                '📍 Dirección: Calle 21 #26-08 Esquina clínica Fatima, San juan de Pasto.\n' +
+                '🕒 Horarios: Lunes a viernes, 15:00 PM – 18:00 PM.\n' +
+                '📞 Teléfono: 3161044386- 602 7212171'
+            );
+            return;
+        }
+
+        // Consultar citas
+        if (text === '2') {
+            await sendMessage(from, 'Por favor, escribe tu número de cédula para consultar tus citas:');
+            // Aquí deberías guardar el estado del usuario para esperar la cédula y luego mostrar las citas.
+            // Puedes implementar una lógica de estado con un objeto global userData[from] si lo necesitas.
+            return;
+        }
+
+        // Cancelar cita
+        if (text === '4') {
+            await sendMessage(from, 'Por favor, escribe tu número de cédula para cancelar tu cita:');
+            // Aquí deberías guardar el estado del usuario para esperar la cédula y luego mostrar las citas a cancelar.
+            return;
+        }
+
+        // Agendar cita
+        if (text === '1') {
+            await sendMessage(from, 'Para agendar una cita, por favor escribe tu número de cédula:');
+            // Aquí deberías guardar el estado del usuario para esperar la cédula y luego pedir los demás datos.
+            return;
+        }
+
+        // Aquí puedes agregar la lógica para continuar los flujos de agendar, consultar y cancelar citas
+        // usando un objeto global userData[from] para guardar el estado de cada usuario.
+
+        // Respuesta por defecto
+        await sendMessage(from, 'No entendí tu mensaje. Escribe "hola" para ver el menú.');
     }
 };
