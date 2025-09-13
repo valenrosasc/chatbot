@@ -432,58 +432,70 @@ const manejarCancelarCita = async (numero, mensaje) => {
             await enviarMensajeWhatsApp(numero, mensajeCitas);
             break;
 
-        case 'seleccionar_cita':
-            if (mensaje.toLowerCase() === 'menu') {
-                delete userData[numero];
-                await mostrarMenuPrincipal(numero);
-                return;
-            }
+       case 'seleccionar_cita':
+    if (mensaje.toLowerCase() === 'menu') {
+        // Limpiar específicamente el estado de cancelación
+        delete userData[numero].cancelarPaso;
+        delete userData[numero].citas;
+        delete userData[numero].cedula;
+        delete userData[numero].citaSeleccionada;
+        await mostrarMenuPrincipal(numero);
+        return;
+    }
 
-            const indice = parseInt(mensaje) - 1;
-            const { citas } = datosUsuario; // Esta variable está bien porque está dentro de su propio case
+    const indice = parseInt(mensaje) - 1;
+    const { citas } = datosUsuario;
 
-            if (isNaN(indice) || indice < 0 || indice >= citas.length) {
-                await enviarMensajeWhatsApp(numero, '⚠️ Opción inválida. Por favor selecciona un número de la lista:');
-                return;
-            }
+    if (isNaN(indice) || indice < 0 || indice >= citas.length) {
+        await enviarMensajeWhatsApp(numero, '⚠️ Opción inválida. Por favor selecciona un número de la lista:');
+        return;
+    }
 
-            datosUsuario.citaSeleccionada = citas[indice];
-            datosUsuario.cancelarPaso = 'confirmar_cancelacion';
+    datosUsuario.citaSeleccionada = citas[indice];
+    datosUsuario.cancelarPaso = 'confirmar_cancelacion';
 
+    await enviarMensajeWhatsApp(
+        numero,
+        `¿Confirmas que deseas cancelar la cita del ${datosUsuario.citaSeleccionada.fecha} a las ${datosUsuario.citaSeleccionada.hora}?\n\nResponde *SI* para confirmar o *NO* para volver al menú.`
+    );
+    break;
+
+case 'confirmar_cancelacion':
+    if (mensaje.toLowerCase() === 'menu') {
+        // Limpiar específicamente el estado de cancelación
+        delete userData[numero].cancelarPaso;
+        delete userData[numero].citas;
+        delete userData[numero].cedula;
+        delete userData[numero].citaSeleccionada;
+        await mostrarMenuPrincipal(numero);
+        return;
+    }
+
+    const respuesta = mensaje.trim().toLowerCase();
+    const { citaSeleccionada } = datosUsuario;
+
+    if (respuesta === 'si') {
+        const resultado = await eliminarCitaEnSQLite(datosUsuario.cedula, citaSeleccionada.fecha, citaSeleccionada.hora);
+
+        if (resultado) {
             await enviarMensajeWhatsApp(
                 numero,
-                `¿Confirmas que deseas cancelar la cita del ${datosUsuario.citaSeleccionada.fecha} a las ${datosUsuario.citaSeleccionada.hora}?\n\nResponde *SI* para confirmar o *NO* para volver al menú.`
+                `✅ Cita del ${citaSeleccionada.fecha} a las ${citaSeleccionada.hora} cancelada.`
             );
-            break;
-
-        case 'confirmar_cancelacion':
-            const respuesta = mensaje.trim().toLowerCase();
-            // Aquí usamos datosUsuario.cedula en lugar de redeclarar cedula
-            const { citaSeleccionada } = datosUsuario;
-
-            if (respuesta === 'si') {
-                const resultado = await eliminarCitaEnSQLite(datosUsuario.cedula, citaSeleccionada.fecha, citaSeleccionada.hora);
-
-                if (resultado) {
-                    await enviarMensajeWhatsApp(
-                        numero,
-                        `✅ Cita del ${citaSeleccionada.fecha} a las ${citaSeleccionada.hora} cancelada.`
-                    );
-                    await subirBaseDeDatosADropbox();
-                } else {
-                    await enviarMensajeWhatsApp(numero, '⚠️ Error al cancelar la cita. Intenta nuevamente.');
-                }
-            } else if (respuesta === 'no') {
-                await enviarMensajeWhatsApp(numero, 'Operación cancelada.');
-            } else {
-                await enviarMensajeWhatsApp(numero, '⚠️ Respuesta no reconocida.');
-            }
-
-            delete userData[numero];
-            await mostrarMenuPrincipal(numero);
-            break;
+            await subirBaseDeDatosADropbox();
+        } else {
+            await enviarMensajeWhatsApp(numero, '⚠️ Error al cancelar la cita. Intenta nuevamente.');
+        }
+    } else if (respuesta === 'no') {
+        await enviarMensajeWhatsApp(numero, 'Operación cancelada.');
+    } else {
+        await enviarMensajeWhatsApp(numero, '⚠️ Respuesta no reconocida.');
     }
-};
+
+    // Limpiar todo el estado del usuario
+    delete userData[numero];
+    await mostrarMenuPrincipal(numero);
+    break;
 
 // Función para manejar el flujo de consultar citas
 const manejarConsultarCitas = async (numero, mensaje) => {
